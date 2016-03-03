@@ -1,0 +1,144 @@
+@using ScrumBasic.ViewModels.Sprint;
+@model UserStoryViewModel
+@{
+    ViewBag.Title = "Project Page";
+    Layout = "~/Views/Shared/_Layout_project.cshtml";
+    List<UserStoryViewModel> data_story_items = ViewData["story_items"] as List<UserStoryViewModel>;
+}
+<div class="app_container">
+    <div class="block">
+        <div class="title">
+            <span>Backlog(10)</span>
+            <a href="#modalAdd" style="float:right" class="btn btn-success btn-xs">添加</a>
+        </div>
+        <ul id="backlog" class="block__list block__list_words">
+            @foreach (var t in data_story_items)
+            {
+                <li id="@t.ID">
+                    <img src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2706011476,1909070034&fm=58" />
+                    <div>@t.Content</div>
+                    <a href="#" class="btn btn-primary btn-xs">编辑</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="block">
+        <div class="title">
+            <span>To Do</span>
+        </div>
+        <ul id="todo" class="block__list block__list_words"></ul>
+    </div>
+
+    <div class="block">
+        <div class="title">
+            <span>Doing</span>
+        </div>
+        <ul id="doing" class="block__list block__list_words">
+            <li>бегемот</li>
+            <li>корм</li>
+            <li>антон</li>
+            <li>сало</li>
+            <li>железосталь</li>
+            <li>валик</li>
+            <li>кровать</li>
+            <li>краб</li>
+        </ul>
+    </div>
+    <div class="block">
+        <div class="title">Done</div>
+        <ul id="done" class="block__list block__list_words">
+            <li>бегемот</li>
+            <li>корм</li>
+            <li>антон</li>
+            <li>сало</li>
+            <li>железосталь</li>
+            <li>валик</li>
+            <li>кровать</li>
+            <li>краб</li>
+        </ul>
+    </div>
+    @*
+
+        <div data-force="18" class="layer block" style="left: 58%; top: 143px; width: 40%;">
+            <div class="layer title">List B</div>
+            <ul id="bar" class="block__list block__list_tags">
+                <li>казнить</li>
+                <li>,</li>
+                <li>нельзя</li>
+                <li>помиловать</li>
+            </ul>
+        </div>*@
+</div>
+<div class="remodal" data-remodal-id="modalAdd">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <form id="formAddItem" asp-controller="UserStory" asp-action="Create" method="post">
+        <div style="text-align:left">
+            <div style="background-color:red">
+                <textarea asp-for="Content" style="height:200px;width:100%;max-width:1024px;">作为  我想要  以便</textarea>
+            </div>
+            <div>
+                <div style="padding:5px">
+                    点数
+                    <select asp-for="Point">
+                        <option style="width:200px">--</option>
+                        <option style="width:200px">1</option>
+                        <option style="width:200px">2</option>
+                        <option style="width:200px">3</option>
+                        <option style="width:200px">5</option>
+                        <option style="width:200px">8</option>
+                    </select>
+                </div>
+                <div style="padding:5px">
+                    类型
+                    <select asp-for="ItemTypeCode">
+                        <option style="width:200px" value="0">用户故事</option>
+                        <option style="width:200px" value="1">新功能</option>
+                        <option style="width:200px" value="2">Bug</option>
+                        <option style="width:200px" value="3">技术问题</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <br>
+        <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
+        <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
+    </form>
+</div>
+
+
+
+
+<script>
+    $(document).on('opening', '.remodal', function () {
+        console.log('Modal is opening');
+    });
+
+    $(document).on('opened', '.remodal', function () {
+        console.log('Modal is opened');
+    });
+
+    $(document).on('closing', '.remodal', function (e) {
+
+        // Reason: 'confirmation', 'cancellation'
+        console.log('Modal is closing' + (e.reason ? ', reason: ' + e.reason : ''));
+    });
+
+    $(document).on('closed', '.remodal', function (e) {
+
+        // Reason: 'confirmation', 'cancellation'
+        console.log('Modal is closed' + (e.reason ? ', reason: ' + e.reason : ''));
+    });
+
+    $(document).on('confirmation', '.remodal', function () {
+        console.log('Confirmation button is clicked');
+        $("#formAddItem").submit();
+    });
+
+    $(document).on('cancellation', '.remodal', function () {
+        console.log('Cancel button is clicked');
+    });
+</script>
+
+
+
+
