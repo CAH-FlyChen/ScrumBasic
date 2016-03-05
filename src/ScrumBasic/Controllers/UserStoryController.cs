@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.OptionsModel;
 using AutoMapper;
 using System;
+using System.Collections;
+using Microsoft.AspNet.Mvc.ViewFeatures;
 
 namespace ScrumBasic.Controllers
 {
@@ -46,8 +48,8 @@ namespace ScrumBasic.Controllers
                 UserStoryViewModel m = Mapper.Map<UserStoryViewModel>(us);
                 models.Add(m);
             }
-            ViewData["story_items"] = models;
-            return View();
+            //ViewData["story_items"] = models;
+            return View((IEnumerable)models);
             //return View(await _context.UserStoryViewModel.ToListAsync());
         }
 
@@ -59,13 +61,13 @@ namespace ScrumBasic.Controllers
         //        return HttpNotFound();
         //    }
 
-        //    UserStoryViewModel userStoryViewModel = await _context.UserStoryViewModel.SingleAsync(m => m.ID == id);
-        //    if (userStoryViewModel == null)
+        //    UserStory us = await _context.UserStory.SingleAsync(m => m.ID == id);
+        //    if (us == null)
         //    {
         //        return HttpNotFound();
         //    }
 
-        //    return View(userStoryViewModel);
+        //    return View(us);
         //}
 
         //// GET: UserStoryViewModels/Create
@@ -118,21 +120,47 @@ namespace ScrumBasic.Controllers
             //return View();
         }
 
-        //// GET: UserStoryViewModels/Edit/5
-        //public async Task<IActionResult> Edit(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
 
-        //    UserStoryViewModel userStoryViewModel = await _context.UserStoryViewModel.SingleAsync(m => m.ID == id);
-        //    if (userStoryViewModel == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(userStoryViewModel);
-        //}
+
+
+        public async Task<IActionResult> EditItem(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return HttpNotFound();
+            }
+            UserStory story = await _context.UserStory.SingleAsync(m => m.ID == itemId);
+            if (story == null)
+            {
+                return HttpNotFound();
+            }
+            return PartialView(story);
+        }
+
+
+        //// GET: UserStoryViewModels/Edit/5
+        public async Task<IActionResult> Edit(UserStoryViewModel vm)
+        {
+            if (vm.ID == null)
+            {
+                return HttpNotFound();
+            }
+
+            UserStory story = await _context.UserStory.SingleAsync(m => m.ID == vm.ID);
+            if (story == null)
+            {
+                return HttpNotFound();
+            }
+            story.Content = vm.Content;
+            story.ItemTypeCode = vm.ItemTypeCode;
+            story.Point = vm.Point;
+
+            return RedirectToAction("Index");
+            //return View(story);
+        }
+
+
+
 
         //// POST: UserStoryViewModels/Edit/5
         //[HttpPost]
@@ -177,4 +205,6 @@ namespace ScrumBasic.Controllers
         //    return RedirectToAction("Index");
         //}
     }
+
+
 }

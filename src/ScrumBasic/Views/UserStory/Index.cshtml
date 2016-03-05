@@ -1,23 +1,24 @@
 @using ScrumBasic.ViewModels.Sprint;
-@model UserStoryViewModel
+@model IEnumerable<UserStoryViewModel>
 @{
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
-    List<UserStoryViewModel> data_story_items = ViewData["story_items"] as List<UserStoryViewModel>;
+    //List<UserStoryViewModel> data_story_items = ViewData["story_items"] as List<UserStoryViewModel>;
 }
 <div class="app_container">
     <div class="block">
         <div class="title">
             <span>Backlog(10)</span>
-            <a href="#modalAdd" style="float:right" class="btn btn-success btn-xs">添加</a>
+            <a style="float:right" class="btn btn-success btn-xs" id="addItem">添加</a>
         </div>
         <ul id="backlog" class="block__list block__list_words">
-            @foreach (var t in data_story_items)
+            @foreach (var t in Model)
             {
-                <li id="@t.ID">
+                <li>
                     <img src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2706011476,1909070034&fm=58" />
                     <div>@t.Content</div>
-                    <a href="#" class="btn btn-primary btn-xs">编辑</a>
+                    @*<a class="btn btn-primary btn-xs" id="editItem">编辑</a>*@
+                    @Html.ActionLink("编辑", "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-primary btn-xs",@Name="EditItem",@ItemID=@t.ID })
                 </li>
             }
         </ul>
@@ -69,48 +70,70 @@
             </ul>
         </div>*@
 </div>
-<div class="remodal" data-remodal-id="modalAdd">
+<div class="remodal" data-remodal-id="modalContent">
     <button data-remodal-action="close" class="remodal-close"></button>
-    <form id="formAddItem" asp-controller="UserStory" asp-action="Create" method="post">
-        <div style="text-align:left">
-            <div style="background-color:red">
-                <textarea asp-for="Content" style="height:200px;width:100%;max-width:1024px;">作为  我想要  以便</textarea>
-            </div>
-            <div>
-                <div style="padding:5px">
-                    点数
-                    <select asp-for="Point">
-                        <option style="width:200px">--</option>
-                        <option style="width:200px">1</option>
-                        <option style="width:200px">2</option>
-                        <option style="width:200px">3</option>
-                        <option style="width:200px">5</option>
-                        <option style="width:200px">8</option>
-                    </select>
-                </div>
-                <div style="padding:5px">
-                    类型
-                    <select asp-for="ItemTypeCode">
-                        <option style="width:200px" value="0">用户故事</option>
-                        <option style="width:200px" value="1">新功能</option>
-                        <option style="width:200px" value="2">Bug</option>
-                        <option style="width:200px" value="3">技术问题</option>
-                    </select>
-                </div>
-            </div>
+
+        <div style="text-align:left" id="remodalDialog">
+
         </div>
         <br>
-        <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
-        <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
-    </form>
+
 </div>
 
-
-
-
 <script>
+    var data = @Html.Raw(Json.Serialize(Model));
+    var dialogInst = $('[data-remodal-id=modalContent]').remodal();
+    var dialogMode = "create";
+
+    $("#addItem").click(function () {
+        dialogMode = "create";
+        $("#Point").val(0);
+        $("#ItemTypeCode").val(0);
+        $("#Content").val("");
+        dialogInst.open();
+    });
+    $("[name='EditItem']").click(function () {
+        dialogMode = "edit";
+        var itemID =  $(this).attr("itemid");
+        var url = $(this).attr('href');
+        $('#remodalDialog').load(url);
+        dialogInst.open();
+
+
+
+        //var dialog = $('<div style="display:none"></div>').appendTo('body');
+        //dialog.load(url, {}, 
+        //    function (responseText, textStatus, XMLHttpRequest) {
+        //        dialog.dialog({
+        //            close: function(event, ui) {
+        //                dialog.remove();
+        //            }
+        //        });
+        //    });
+        return false;
+
+
+        //for(var i=0;i<data.lenth();i++)
+        //{
+        //    var oneItem = data[i];
+        //    if(oneItem.ID==itemID)
+        //    {
+        //        $("#Point").val(oneItem.Point);
+        //        $("#ItemTypeCode").val(oneItem.ItemTypeCode);
+        //        $("#Content").val(oneItem.Content);
+        //        break;
+        //    }
+        //}
+
+
+
+        //dialogInst.open();
+    });
+
+
     $(document).on('opening', '.remodal', function () {
         console.log('Modal is opening');
+
     });
 
     $(document).on('opened', '.remodal', function () {
@@ -130,8 +153,11 @@
     });
 
     $(document).on('confirmation', '.remodal', function () {
-        console.log('Confirmation button is clicked');
-        $("#formAddItem").submit();
+        if (dialogMode = "create")
+        {
+            $("#formAddItem").submit();
+        }
+
     });
 
     $(document).on('cancellation', '.remodal', function () {
