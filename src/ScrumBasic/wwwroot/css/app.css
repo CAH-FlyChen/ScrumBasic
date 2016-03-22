@@ -9,12 +9,13 @@
 .app_container {
     height: 640px;
     /*background-image: url('../images/background.jpg');*/
+    background-color:white;
     background-size:100%;
     position: relative;
     margin-left:5px;
 }
 .block {
-    width:300px;
+    width:320px;
     float:left;
     padding:5px;
 }
@@ -43,7 +44,8 @@
     border-bottom:solid 1px gray;
     border-left:solid 1px gray;
     border-right:solid 1px gray;
-    height:50px;/*条目高度*/
+    height:62px;/*条目高度*/
+    background-color:#f4f4f4;
 }
 		.block__list_words .sortable-ghost {
 			opacity: 0.8;
@@ -60,12 +62,12 @@
             height:50px
         }
         /*文字内容*/
-        .block__list_words li div{
+        .item_content{
             float:left;
             padding:3px;
             display:inline;
-            width:240px;
-            height:40px;
+            max-width:250px;
+            height:100%;
             text-overflow:-o-ellipsis-lastline;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -75,12 +77,19 @@
         }
         /*编辑按钮*/
         .block__list_words li a{
-            vertical-align:middle; 
-            float:right; 
-            margin-top:10px;
-            line-height: 20px;
-            margin-right:5px;
+            /*vertical-align:middle; 
+            float:right; */
+            margin-top:5px;
+            /*line-height: 20px;*/
+            margin-right:0px;
         }
+
+        .item_options{
+            display:inline-block;
+            width:50px;
+            float:right;
+        }
+
 /*h1 {
 	color: #FF3F00;
 	font-size: 20px;

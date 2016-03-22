@@ -8,7 +8,7 @@
 <div class="app_container">
     <div class="block">
         <div class="title">
-            <span>Backlog(10)</span>
+            <span>Current(10)</span>
             <a style="float:right" class="btn btn-success btn-xs" id="addItem">添加</a>
         </div>
         <ul id="backlog" class="block__list block__list_words">
@@ -16,16 +16,20 @@
             {
                 <li>
                     <img src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2706011476,1909070034&fm=58" />
-                    <div>@t.Content</div>
-                    @*<a class="btn btn-primary btn-xs" id="editItem">编辑</a>*@
-                    @Html.ActionLink("编辑", "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-primary btn-xs",@Name="EditItem",@ItemID=@t.ID })
+                    
+                    <div class="item_options">
+                        <a class="btn btn-primary btn-xs" id="editItem">编辑cc</a>
+                        @Html.ActionLink("编辑", "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-primary btn-xs", @Name = "EditItem", @ItemID = @t.ID })
+                    </div>
+
+                    <div class="item_content">@t.Content</div>
                 </li>
             }
         </ul>
     </div>
     <div class="block">
         <div class="title">
-            <span>To Do</span>
+            <span>Backlog</span>
         </div>
         <ul id="todo" class="block__list block__list_words"></ul>
     </div>

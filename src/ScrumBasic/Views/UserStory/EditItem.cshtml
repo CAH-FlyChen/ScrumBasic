@@ -65,9 +65,26 @@
             <label asp-for="Status" class="col-md-2 control-label">状态</label>
             <div class="col-md-10">
 
-                    <input asp-for="Status" class="form-control" />
-                    <span asp-validation-for="Status" class="text-danger" />
-</div>
+                @Html.DropDownListFor(
+        model => model.Point,
+        new SelectList(
+            new List<Object>
+                {
+                    new { value = 0 , text = "未开始"  },
+                    new { value = 1 , text = "进行中" },
+                    new { value = 2 , text = "已完成"},
+                    new { value = 3 , text = "待审批"},
+                    new { value = 4 , text = "通过"},
+                    new { value = 5 , text = "拒绝"},
+                    new { value = 6 , text = "关闭"},
+                 },
+                "value",
+                "text",
+                Model.Status
+             ), null, new { @class = "form-control" }
+        )
+                <span asp-validation-for="Point" class="text-danger" />
+            </div>
         </div>
 
 

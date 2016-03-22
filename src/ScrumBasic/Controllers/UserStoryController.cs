@@ -16,6 +16,7 @@ namespace ScrumBasic.Controllers
 {
     public class UserStoryController : Controller
     {
+        private string mystr;
         private IOptions<Startup.MyOptions> _optons { get; set; }
         public static List<UserStoryViewModel> models = new List<UserStoryViewModel>();
         private ApplicationDbContext _context;
