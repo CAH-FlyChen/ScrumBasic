@@ -1,5 +1,5 @@
 @using ScrumBasic.ViewModels.Sprint;
-@model IEnumerable<UserStoryViewModel>
+@model List<UserStoryViewModel>
 @{
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
@@ -9,20 +9,53 @@
     <div class="block">
         <div class="title">
             <span>Current(10)</span>
-            <a style="float:right" class="btn btn-success btn-xs" id="addItem">添加</a>
+            @Html.ActionLink("添加", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
         </div>
-        <ul id="backlog" class="block__list block__list_words">
+        <ul id="current" class="block__list block__list_words">
             @foreach (var t in Model)
             {
                 <li>
-                    <img src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2706011476,1909070034&fm=58" />
-                    
-                    <div class="item_options">
-                        <a class="btn btn-primary btn-xs" id="editItem">编辑cc</a>
-                        @Html.ActionLink("编辑", "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-primary btn-xs", @Name = "EditItem", @ItemID = @t.ID })
-                    </div>
+                    <span style="float:left;color:green;margin-left:2px">
+                        @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID}, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID , @Order = @t.Order })
+                    </span>
 
                     <div class="item_content">@t.Content</div>
+                    <div class="item_options">
+                        <a class="btn btn-info btn-xs" id="editItem">
+
+                            @if (t.Status == 0)
+                            {
+                                <sapn>未开始</sapn>
+                            }
+                            else if (t.Status == 1)
+                            {
+                                <sapn>进行中</sapn>
+                            }
+                            else if (t.Status == 2)
+                            {
+                                <sapn>已完成</sapn>
+                            }
+                            else if (t.Status == 3)
+                            {
+                                <sapn>待审批</sapn>
+                            }
+                            else if (t.Status == 4)
+                            {
+                                <sapn>通过</sapn>
+                            }
+                            else if (t.Status == 5)
+                            {
+                                <sapn>拒绝</sapn>
+                            }
+                            else if (t.Status == 6)
+                            {
+                                <sapn>关闭</sapn>
+                            }
+                        </a>
+                        
+                    </div>
+
+                    
                 </li>
             }
         </ul>
@@ -31,7 +64,7 @@
         <div class="title">
             <span>Backlog</span>
         </div>
-        <ul id="todo" class="block__list block__list_words"></ul>
+        <ul id="backlog" class="block__list block__list_words"></ul>
     </div>
 
     <div class="block">
@@ -81,7 +114,8 @@
 
         </div>
         <br>
-
+    <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
+    <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
 </div>
 
 <script>
@@ -89,12 +123,12 @@
     var dialogInst = $('[data-remodal-id=modalContent]').remodal();
     var dialogMode = "create";
 
-    $("#addItem").click(function () {
+    $("[name='AddItem']").click(function () {
         dialogMode = "create";
-        $("#Point").val(0);
-        $("#ItemTypeCode").val(0);
-        $("#Content").val("");
+        var url = $(this).attr('href');
+        $('#remodalDialog').load(url);
         dialogInst.open();
+        return false;
     });
     $("[name='EditItem']").click(function () {
         dialogMode = "edit";
@@ -102,36 +136,7 @@
         var url = $(this).attr('href');
         $('#remodalDialog').load(url);
         dialogInst.open();
-
-
-
-        //var dialog = $('<div style="display:none"></div>').appendTo('body');
-        //dialog.load(url, {}, 
-        //    function (responseText, textStatus, XMLHttpRequest) {
-        //        dialog.dialog({
-        //            close: function(event, ui) {
-        //                dialog.remove();
-        //            }
-        //        });
-        //    });
         return false;
-
-
-        //for(var i=0;i<data.lenth();i++)
-        //{
-        //    var oneItem = data[i];
-        //    if(oneItem.ID==itemID)
-        //    {
-        //        $("#Point").val(oneItem.Point);
-        //        $("#ItemTypeCode").val(oneItem.ItemTypeCode);
-        //        $("#Content").val(oneItem.Content);
-        //        break;
-        //    }
-        //}
-
-
-
-        //dialogInst.open();
     });
 
 
@@ -157,9 +162,14 @@
     });
 
     $(document).on('confirmation', '.remodal', function () {
-        if (dialogMode = "create")
+        if (dialogMode == "create")
         {
-            $("#formAddItem").submit();
+            $("#StoryItemCreateForm").submit();
+        }
+        else if(dialogMode=="edit")
+        {
+            $("#StoryItemEditForm").submit();
+            
         }
 
     });
@@ -167,6 +177,10 @@
     $(document).on('cancellation', '.remodal', function () {
         console.log('Cancel button is clicked');
     });
+
+
+
+
 </script>
 
 

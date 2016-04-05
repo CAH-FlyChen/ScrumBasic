@@ -19,5 +19,7 @@ namespace ScrumBasic.ViewModels.Sprint
         /// backlog todo doing done
         /// </summary>
         public int Status { get; set; }
+        public int Order { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

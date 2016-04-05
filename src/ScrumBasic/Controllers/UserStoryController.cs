@@ -43,14 +43,14 @@ namespace ScrumBasic.Controllers
         public async Task<IActionResult> Index()
         {
             models.Clear();
-            List<UserStory> userStories = await _context.UserStory.ToListAsync<UserStory>();
+            List<UserStory> userStories = await _context.UserStories.OrderBy(t=>t.Order).ToListAsync<UserStory>();
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = Mapper.Map<UserStoryViewModel>(us);
                 models.Add(m);
             }
             //ViewData["story_items"] = models;
-            return View((IEnumerable)models);
+            return View(models);
             //return View(await _context.UserStoryViewModel.ToListAsync());
         }
 
@@ -77,9 +77,19 @@ namespace ScrumBasic.Controllers
         //    return View();
         //}
 
+        public IActionResult Create()
+        {
+            UserStoryViewModel userStoryViewModel = new UserStoryViewModel();
+            userStoryViewModel.Content = "";
+            userStoryViewModel.ID = Guid.NewGuid().ToString("N");
+            userStoryViewModel.Point = 0;
+            userStoryViewModel.Status = 0;
+            return PartialView(userStoryViewModel);
+        }
+
         //// POST: UserStoryViewModels/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserStoryViewModel userStoryViewModel)
         {
             if (ModelState.IsValid)
@@ -87,8 +97,9 @@ namespace ScrumBasic.Controllers
                 //mapping   
                 UserStory usNew = Mapper.Map<UserStory>(userStoryViewModel);
                 usNew.ID = Guid.NewGuid().ToString("N");
-                usNew.Status = 1;
-                _context.UserStory.Add(usNew);
+                usNew.CreateTime = DateTime.Now;
+                usNew.Order = _context.UserStories.Max(t => t.Order)+1;
+                _context.UserStories.Add(usNew);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -109,7 +120,7 @@ namespace ScrumBasic.Controllers
                 return HttpNotFound();
             }
 
-            UserStory us = await _context.UserStory.SingleAsync(m => m.ID == p.ItemId);
+            UserStory us = await _context.UserStories.SingleAsync(m => m.ID == p.ItemId);
             if (us == null)
             {
                 return HttpNotFound();
@@ -121,7 +132,38 @@ namespace ScrumBasic.Controllers
             //return View();
         }
 
-
+        public class ChangeOrderParam
+        {
+            public string ItemID { get; set; }
+            public int OldIndex { get; set; }
+            public int NewIndex { get; set; }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangeOrder([FromBody] ChangeOrderParam p)
+        {
+            UserStory story = await _context.UserStories.SingleAsync(m => m.ID == p.ItemID);
+            if (story == null)
+            {
+                return HttpNotFound();
+            }
+            
+            if(p.NewIndex>p.OldIndex)
+            {
+                //向下
+                var items = _context.UserStories.Where(t => t.Order <= p.NewIndex && t.Order > p.OldIndex).ToList();
+                foreach (var t in items)
+                    t.Order = t.Order - 1;
+            }
+            else
+            {
+                var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.Order < p.OldIndex).ToList();
+                foreach (var t in items)
+                    t.Order = t.Order + 1;
+            }
+            story.Order = p.NewIndex;
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
 
         public async Task<IActionResult> EditItem(string itemId)
@@ -130,7 +172,7 @@ namespace ScrumBasic.Controllers
             {
                 return HttpNotFound();
             }
-            UserStory story = await _context.UserStory.SingleAsync(m => m.ID == itemId);
+            UserStory story = await _context.UserStories.SingleAsync(m => m.ID == itemId);
             if (story == null)
             {
                 return HttpNotFound();
@@ -138,8 +180,7 @@ namespace ScrumBasic.Controllers
             return PartialView(story);
         }
 
-
-        //// GET: UserStoryViewModels/Edit/5
+        [HttpPost]
         public async Task<IActionResult> Edit(UserStoryViewModel vm)
         {
             if (vm.ID == null)
@@ -147,7 +188,7 @@ namespace ScrumBasic.Controllers
                 return HttpNotFound();
             }
 
-            UserStory story = await _context.UserStory.SingleAsync(m => m.ID == vm.ID);
+            UserStory story = await _context.UserStories.SingleAsync(m => m.ID == vm.ID);
             if (story == null)
             {
                 return HttpNotFound();
@@ -155,6 +196,8 @@ namespace ScrumBasic.Controllers
             story.Content = vm.Content;
             story.ItemTypeCode = vm.ItemTypeCode;
             story.Point = vm.Point;
+            story.Status = vm.Status;
+            _context.SaveChanges();
 
             return RedirectToAction("Index");
             //return View(story);

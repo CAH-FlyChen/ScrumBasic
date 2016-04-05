@@ -20,5 +20,7 @@ namespace ScrumBasic.Models
         /// backlog todo doing done
         /// </summary>
         public int Status { get; set; }
+        public int Order { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

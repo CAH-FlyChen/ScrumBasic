@@ -1,8 +1,10 @@
-﻿@model ScrumBasic.Models.UserStory
-
-<form asp-action="Edit" id="StoryItemEditForm">
+﻿@model ScrumBasic.ViewModels.Sprint.UserStoryViewModel
+@{
+    Layout = "";
+}
+<form asp-action="Create" id="StoryItemCreateForm">
     <div class="form-horizontal">
-        <h4>编辑用户故事</h4>
+        <h4>创建用户故事</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />
@@ -64,7 +66,6 @@
         <div class="form-group">
             <label asp-for="Status" class="col-md-2 control-label">状态</label>
             <div class="col-md-10">
-
                 @Html.DropDownListFor(
         model => model.Status,
         new SelectList(
@@ -95,6 +96,7 @@
         </div>*@
     </div>
 </form>
+
 
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

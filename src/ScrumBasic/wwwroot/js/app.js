@@ -1,17 +1,17 @@
-function Move(itemId,targetStatus)
+function Move(itemId,oldIndex,newIndex)
 {
     $.ajax({
-        url: "UserStory/Move",
+        url: "UserStory/ChangeOrder",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ ItemId: itemId, TargetStatus: 2 }),
+        data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex,NewIndex:newIndex }),
         success: function (response) {
             response ? alert("It worked!")
             : alert("It didn't work.");
         }
     });
 }
-
+localStorage.setItem("currentG","");
 (function () {
 	'use strict';
 
@@ -60,28 +60,43 @@ function Move(itemId,targetStatus)
 	}
 
 
-	Sortable.create(byId('backlog'), {
-		group: "words",
+	Sortable.create(byId('current'), {
+	    group: "currentG",
 		animation: 150,
-		store: {
-			get: function (sortable) {
-				var order = localStorage.getItem(sortable.options.group);
-				return order ? order.split('|') : [];
-			},
-			set: function (sortable) {
-				var order = sortable.toArray();
-				localStorage.setItem(sortable.options.group, order.join('|'));
-			}
-		},
+		//store: {
+		//	get: function (sortable) {
+		//		var order = localStorage.getItem(sortable.options.group);
+		//		return order ? order.split('|') : [];
+		//	},
+		//	set: function (sortable) {
+		//		var order = sortable.toArray();
+		//		localStorage.setItem(sortable.options.group, order.join('|'));
+		//	}
+		//},
 		onAdd: function (evt){ console.log('onAdd.backlog:', [evt.item, evt.from]); },
-		onUpdate: function (evt) { console.log('onUpdate.backlog:', [evt.item, evt.from]); },
-		onRemove: function (evt) { console.log('onRemove.backlog:', [evt.item, evt.from]); },
+		onUpdate: function (evt) {
+		    console.log('onUpdate.backlog:', [evt.item, evt.from]);
+		},
+		onRemove: function (evt) {
+
+
+		    console.log('onRemove.backlog:', [evt.item, evt.from]);
+
+
+		},
 		onStart: function (evt) { console.log('onStart.backlog:', [evt.item, evt.from]); },
-		onSort: function (evt) { console.log('onStart.backlog:', [evt.item, evt.from]); },
-		onEnd: function (evt) { console.log('onEnd.backlog:', [evt.item, evt.from]); }
+		onSort: function (evt) {
+		    console.log('onSort.backlog:', [evt.item, evt.from]);
+		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex);
+		},
+		onEnd: function (evt) {
+		    console.log('onEnd.backlog:', [evt.item, evt.from]);
+		    
+		    //alert("我是第"+evt.item.index()+"个");
+		}
 	});
 
-	Sortable.create(byId('todo'), {
+	Sortable.create(byId('backlog'), {
 	    group: "words",
 	    animation: 150,
 	    onAdd: function (evt) {
