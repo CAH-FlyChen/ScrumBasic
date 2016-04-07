@@ -1,5 +1,5 @@
 @using ScrumBasic.ViewModels.Sprint;
-@model List<UserStoryViewModel>
+@model UserStoryListViewModel
 @{
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
@@ -8,12 +8,16 @@
 <div class="app_container">
     <div class="block">
         <div class="title">
-            <span>Current(10)</span>
+            <span>Backlog(@Model.BacklogItemCount)</span>
             @Html.ActionLink("添加", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
         </div>
-        <ul id="current" class="block__list block__list_words">
-            @foreach (var t in Model)
+        <ul id="backlog" class="block__list block__list_words">
+            @foreach (var t in Model.BacklogItems)
             {
+                @if (t.ListID != "backlog")
+                {
+                    continue;
+                }
                 <li>
                     <span style="float:left;color:green;margin-left:2px">
                         @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID}, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID , @Order = @t.Order })
@@ -22,35 +26,7 @@
                     <div class="item_content">@t.Content</div>
                     <div class="item_options">
                         <a class="btn btn-info btn-xs" id="editItem">
-
-                            @if (t.Status == 0)
-                            {
-                                <sapn>未开始</sapn>
-                            }
-                            else if (t.Status == 1)
-                            {
-                                <sapn>进行中</sapn>
-                            }
-                            else if (t.Status == 2)
-                            {
-                                <sapn>已完成</sapn>
-                            }
-                            else if (t.Status == 3)
-                            {
-                                <sapn>待审批</sapn>
-                            }
-                            else if (t.Status == 4)
-                            {
-                                <sapn>通过</sapn>
-                            }
-                            else if (t.Status == 5)
-                            {
-                                <sapn>拒绝</sapn>
-                            }
-                            else if (t.Status == 6)
-                            {
-                                <sapn>关闭</sapn>
-                            }
+                                <sapn>@t.StatusName</sapn>
                         </a>
                         
                     </div>
@@ -62,9 +38,32 @@
     </div>
     <div class="block">
         <div class="title">
-            <span>Backlog</span>
+            <span>Current(@Model.CurrentItemCount)</span>
         </div>
-        <ul id="backlog" class="block__list block__list_words"></ul>
+        <ul id="current" class="block__list block__list_words">
+            @foreach (var t in Model.CurrentItems)
+            {
+                @if (t.ListID != "current")
+                {
+                    continue;
+                }
+                <li>
+                    <span style="float:left;color:green;margin-left:2px">
+                        @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID, @Order = @t.Order })
+                    </span>
+
+                    <div class="item_content">@t.Content</div>
+                    <div class="item_options">
+                        <a class="btn btn-info btn-xs" id="editItem">
+                            <sapn>@t.StatusName</sapn>
+                        </a>
+
+                    </div>
+
+
+                </li>
+            }
+        </ul>
     </div>
 
     <div class="block">

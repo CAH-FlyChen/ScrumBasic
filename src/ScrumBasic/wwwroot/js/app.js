@@ -1,17 +1,29 @@
-function Move(itemId,oldIndex,newIndex)
+function Move(itemId,oldIndex,newIndex,oldListID)
 {
     $.ajax({
         url: "UserStory/ChangeOrder",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex,NewIndex:newIndex }),
+        data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex, NewIndex: newIndex, OldListID: oldListID, NewListID: "" }),
         success: function (response) {
             response ? alert("It worked!")
             : alert("It didn't work.");
         }
     });
 }
-localStorage.setItem("currentG","");
+function MoveCrossList(itemId, newIndex, oldListID ,newListID)
+{
+    $.ajax({
+        url: "UserStory/ChangeOrder",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ ItemId: itemId, OldIndex: -1, NewIndex: newIndex, OldListID: oldListID, NewListID: newListID }),
+        success: function (response) {
+            response ? alert("It worked!")
+            : alert("It didn't work.");
+        }
+    });
+}
 (function () {
 	'use strict';
 
@@ -59,9 +71,26 @@ localStorage.setItem("currentG","");
 		};
 	}
 
+	Sortable.create(byId('backlog'), {
+	    group: "mygroup",
+	    animation: 150,
+	    onAdd: function (evt) {
+	        console.log('onAdd.todo:', [evt.item, evt.from]);
+	        //alert(evt.item.id);
+	        //Move(evt.itemId, 2);
+	    },
+	    onUpdate: function (evt) {
+	        console.log('onUpdate.todo:', [evt.item, evt.from]);
+	        Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "backlog");
+	    },
+	    onRemove: function (evt) { console.log('onRemove.todo:', [evt.item, evt.from]); },
+	    onStart: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
+	    onSort: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
+	    onEnd: function (evt) { console.log('onEnd.todo:', [evt.item, evt.from]); }
+	});
 
 	Sortable.create(byId('current'), {
-	    group: "currentG",
+	    group: "mygroup",
 		animation: 150,
 		//store: {
 		//	get: function (sortable) {
@@ -73,7 +102,10 @@ localStorage.setItem("currentG","");
 		//		localStorage.setItem(sortable.options.group, order.join('|'));
 		//	}
 		//},
-		onAdd: function (evt){ console.log('onAdd.backlog:', [evt.item, evt.from]); },
+		onAdd: function (evt) {
+		    console.log('onAdd.backlog:', [evt.item, evt.from]);
+		    MoveCrossList($(evt.item.children[0].children[0]).attr("itemid"), evt.newIndex, evt.from.id, evt.to.id);
+		},
 		onUpdate: function (evt) {
 		    console.log('onUpdate.backlog:', [evt.item, evt.from]);
 		},
@@ -87,53 +119,52 @@ localStorage.setItem("currentG","");
 		onStart: function (evt) { console.log('onStart.backlog:', [evt.item, evt.from]); },
 		onSort: function (evt) {
 		    console.log('onSort.backlog:', [evt.item, evt.from]);
-		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex);
+		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "current");
 		},
 		onEnd: function (evt) {
 		    console.log('onEnd.backlog:', [evt.item, evt.from]);
-		    
+		    //
 		    //alert("我是第"+evt.item.index()+"个");
 		}
 	});
 
-	Sortable.create(byId('backlog'), {
-	    group: "words",
-	    animation: 150,
-	    onAdd: function (evt) {
-	        console.log('onAdd.todo:', [evt.item, evt.from]);
-	        //alert(evt.item.id);
-	        Move(evt.itemId, 2);
-	    },
-	    onUpdate: function (evt) { console.log('onUpdate.todo:', [evt.item, evt.from]); },
-	    onRemove: function (evt) { console.log('onRemove.todo:', [evt.item, evt.from]); },
-	    onStart: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
-	    onSort: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
-	    onEnd: function (evt) { console.log('onEnd.todo:', [evt.item, evt.from]); }
-	});
+
 
 	Sortable.create(byId('doing'), {
-		group: "words",
+	    group: "mygroup",
 		animation: 150,
 		onAdd: function (evt) {
 		    console.log('onAdd.doing:', evt.item);
-		    Move(evt.itemId, 3);
+		    //Move(evt.itemId, 3);
 		},
 		onUpdate: function (evt) { console.log('onUpdate.doing:', evt.item); },
-		onRemove: function (evt) { console.log('onRemove.doing:', evt.item); },
-		onStart: function (evt) { console.log('onStart.doing:', evt.item); },
-		onEnd: function (evt) { console.log('onEnd.doing:', evt.item); }
+		onRemove: function (evt) {
+		    console.log('onRemove.doing:', evt.item);
+		},
+		onStart: function (evt) {
+		    console.log('onStart.doing:', evt.item);
+		},
+		onEnd: function (evt) {
+		    console.log('onEnd.doing:', evt.item);
+		}
 	});
 	Sortable.create(byId('done'), {
-	    group: "words",
+	    group: "mygroup",
 	    animation: 150,
 	    onAdd: function (evt) {
 	        console.log('onAdd.done:', evt.item);
-	        Move(evt.itemId, 4);
+	        //Move(evt.itemId, 4);
 	    },
 	    onUpdate: function (evt) { console.log('onUpdate.done:', evt.item); },
-	    onRemove: function (evt) { console.log('onRemove.done:', evt.item); },
-	    onStart: function (evt) { console.log('onStart.done:', evt.item); },
-	    onEnd: function (evt) { console.log('onEnd.done:', evt.item); }
+	    onRemove: function (evt) {
+	        console.log('onRemove.done:', evt.item);
+	    },
+	    onStart: function (evt) {
+	        console.log('onStart.done:', evt.item);
+	    },
+	    onEnd: function (evt) {
+	        console.log('onEnd.done:', evt.item);
+	    }
 	});
 
 	//// Multi groups

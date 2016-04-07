@@ -7,7 +7,13 @@ namespace ScrumBasic.Models
 {
     public class StoryStatus
     {
-        private static Dictionary<string, string> status;
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public int Order { get; set; }
+    }
+    public class StoryStatusList
+    {
+        private static List<StoryStatus> status = new List<StoryStatus>();
         public static string 未开始 { get { return "NotStarted"; } }
         public static string 进行中 { get { return "InProgress"; } }
         public static string 已完成 { get { return "Complete"; } }
@@ -17,39 +23,47 @@ namespace ScrumBasic.Models
         public static string 关闭 { get { return "Close"; } }
         public static string 已关闭 { get { return "Closed"; } }
 
-        static StoryStatus()
+        static StoryStatusList()
         {
-            if(status==null)
+            string[] namesValues = new string[] {
+                "未开始", "NotStarted",
+                "进行中", "InProgress",
+                "已完成", "Complete",
+                "提交审批", "Approve",
+                "审批通过", "Approval",
+                "审批拒绝", "Rejected",
+                "关闭", "Close",
+                "已关闭", "Closed"
+            };
+            for (int i = 0; i < namesValues.Length; i += 2)
             {
-                Dictionary<string, string> kvs = new Dictionary<string, string>();
-                kvs.Add("未开始", "NotStarted");
-                kvs.Add("进行中", "InProgress");
-                kvs.Add("已完成", "Complete");
-                kvs.Add("提交审批", "Approve");
-                kvs.Add("审批通过", "Approval");
-                kvs.Add("审批拒绝", "Rejected");
-                kvs.Add("关闭", "Close");
-                kvs.Add("已关闭", "Closed");
-                status = kvs;
+                StoryStatus ss = new StoryStatus();
+                ss.Name = namesValues[i];
+                ss.Value = namesValues[i + 1];
+                ss.Order = i;
+                status.Add(ss);
             }
+
+
+
         }
 
 
-        public static Dictionary<string,string> GetStatusList()
+        public static List<StoryStatus> GetStatusList()
         {
             return status;
         }
 
         public static string GetStatusText(string code)
         {
-            KeyValuePair<string,string> r = status.SingleOrDefault(x => x.Value == code);
+            var r = status.SingleOrDefault(x => x.Value==code);
             if(default(KeyValuePair<string, string>).Equals(r))
             {
                 return ""; 
             }
             else
             {
-                return r.Key;
+                return r.Name;
             }
         }
 

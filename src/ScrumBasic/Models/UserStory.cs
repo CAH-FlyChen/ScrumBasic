@@ -17,9 +17,13 @@ namespace ScrumBasic.Models
         /// </summary>
         public int ItemTypeCode { get; set; }
         /// <summary>
-        /// backlog todo doing done
+        /// 未开始 已完成 。。。
         /// </summary>
-        public int Status { get; set; }
+        public string Status { get; set; }
+        /// <summary>
+        /// 列表ID  current backlogice 等
+        /// </summary>
+        public string ListID { get; set; }
         public int Order { get; set; }
         public DateTime CreateTime { get; set; }
     }

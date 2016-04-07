@@ -156,11 +156,13 @@ namespace ScrumBasic.Migrations
 
                     b.Property<int>("ItemTypeCode");
 
+                    b.Property<string>("ListID");
+
                     b.Property<int>("Order");
 
                     b.Property<int>("Point");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.HasKey("ID");
                 });

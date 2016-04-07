@@ -18,7 +18,7 @@ namespace ScrumBasic.Controllers
     {
         private string mystr;
         private IOptions<Startup.MyOptions> _optons { get; set; }
-        public static List<UserStoryViewModel> models = new List<UserStoryViewModel>();
+        public UserStoryListViewModel models = new UserStoryListViewModel();
         private ApplicationDbContext _context;
         /// <summary>
         /// 注入
@@ -42,16 +42,24 @@ namespace ScrumBasic.Controllers
         // GET: UserStoryViewModels
         public async Task<IActionResult> Index()
         {
-            models.Clear();
             List<UserStory> userStories = await _context.UserStories.OrderBy(t=>t.Order).ToListAsync<UserStory>();
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = Mapper.Map<UserStoryViewModel>(us);
-                models.Add(m);
+                m.StatusName = StoryStatusList.GetStatusText(m.Status);
+                if (m.ListID == "backlog")
+                {
+                    models.BacklogItemCount += 1;
+                    models.BacklogItems.Add(m);
+                } 
+                else if (m.ListID == "current")
+                {
+                    models.CurrentItemCount += 1;
+                    models.CurrentItems.Add(m);
+                }
             }
-            //ViewData["story_items"] = models;
+
             return View(models);
-            //return View(await _context.UserStoryViewModel.ToListAsync());
         }
 
         //// GET: UserStoryViewModels/Details/5
@@ -83,7 +91,7 @@ namespace ScrumBasic.Controllers
             userStoryViewModel.Content = "";
             userStoryViewModel.ID = Guid.NewGuid().ToString("N");
             userStoryViewModel.Point = 0;
-            userStoryViewModel.Status = 0;
+            userStoryViewModel.Status = StoryStatusList.未开始;
             return PartialView(userStoryViewModel);
         }
 
@@ -99,6 +107,7 @@ namespace ScrumBasic.Controllers
                 usNew.ID = Guid.NewGuid().ToString("N");
                 usNew.CreateTime = DateTime.Now;
                 usNew.Order = _context.UserStories.Max(t => t.Order)+1;
+                usNew.ListID = "Backlog";
                 _context.UserStories.Add(usNew);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -108,7 +117,7 @@ namespace ScrumBasic.Controllers
         public class Pa
         {
             public string ItemId { get; set; }
-            public int TargetStatus { get; set; }
+            public string TargetStatus { get; set; }
         }
 
         // GET: UserStoryViewModels/Edit/5
@@ -137,6 +146,8 @@ namespace ScrumBasic.Controllers
             public string ItemID { get; set; }
             public int OldIndex { get; set; }
             public int NewIndex { get; set; }
+            public string OldListID { get; set; }
+            public string NewListID { get; set; }
         }
         [HttpPost]
         public async Task<IActionResult> ChangeOrder([FromBody] ChangeOrderParam p)
@@ -146,21 +157,38 @@ namespace ScrumBasic.Controllers
             {
                 return HttpNotFound();
             }
-            
-            if(p.NewIndex>p.OldIndex)
+            if(p.OldIndex==-1)
             {
-                //向下
-                var items = _context.UserStories.Where(t => t.Order <= p.NewIndex && t.Order > p.OldIndex).ToList();
+                story.Order = p.NewIndex;
+                story.ListID = p.NewListID;
+
+                var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.ListID == p.OldListID).ToList();
                 foreach (var t in items)
                     t.Order = t.Order - 1;
+
+                var itemsx = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.ListID == p.NewListID).ToList();
+                foreach (var t in itemsx)
+                    t.Order = t.Order + 1;
+
             }
             else
             {
-                var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.Order < p.OldIndex).ToList();
-                foreach (var t in items)
-                    t.Order = t.Order + 1;
+                if (p.NewIndex > p.OldIndex)
+                {
+                    //向下
+                    var items = _context.UserStories.Where(t => t.Order <= p.NewIndex && t.Order > p.OldIndex && t.ListID == p.OldListID).ToList();
+                    foreach (var t in items)
+                        t.Order = t.Order - 1;
+                }
+                else
+                {
+                    var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.Order < p.OldIndex && t.ListID==p.OldListID).ToList();
+                    foreach (var t in items)
+                        t.Order = t.Order + 1;
+                }
+                story.Order = p.NewIndex;
             }
-            story.Order = p.NewIndex;
+
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
