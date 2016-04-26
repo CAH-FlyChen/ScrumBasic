@@ -192,8 +192,6 @@ namespace ScrumBasic.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
-
-
         public async Task<IActionResult> EditItem(string itemId)
         {
             if (string.IsNullOrEmpty(itemId))
@@ -232,6 +230,21 @@ namespace ScrumBasic.Controllers
         }
 
 
+        public class ChangeStatusParam
+        {
+            public string ItemID { get; set; }
+            public string CurrentStatusCode { get; set; }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(ChangeStatusParam p)
+        {
+            if(ModelState.IsValid)
+            {
+                _context.
+            }
+        }
 
 
         //// POST: UserStoryViewModels/Edit/5

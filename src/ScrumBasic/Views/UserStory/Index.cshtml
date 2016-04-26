@@ -9,7 +9,7 @@
     <div class="block">
         <div class="title">
             <span>Backlog(@Model.BacklogItemCount)</span>
-            @Html.ActionLink("添加", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
+            @Html.ActionLink("+", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
         </div>
         <ul id="backlog" class="block__list block__list_words">
             @foreach (var t in Model.BacklogItems)
@@ -22,16 +22,12 @@
                     <span style="float:left;color:green;margin-left:2px">
                         @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID}, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID , @Order = @t.Order })
                     </span>
-
                     <div class="item_content">@t.Content</div>
                     <div class="item_options">
-                        <a class="btn btn-info btn-xs" id="editItem">
+                        <a class="btn btn-info btn-xs" name="changeItemStatus">
                                 <sapn>@t.StatusName</sapn>
                         </a>
-                        
                     </div>
-
-                    
                 </li>
             }
         </ul>
@@ -54,9 +50,7 @@
 
                     <div class="item_content">@t.Content</div>
                     <div class="item_options">
-                        <a class="btn btn-info btn-xs" id="editItem">
-                            <sapn>@t.StatusName</sapn>
-                        </a>
+                        @Html.ActionLink(@t.StatusName, "ChangeStatus", new { itemID = @t.ID }, new { @class = "btn btn-info btn-xs", @Name = "changeItemStatus", @ItemID = @t.ID })
 
                     </div>
 
@@ -68,7 +62,7 @@
 
     <div class="block">
         <div class="title">
-            <span>Doing</span>
+            <span>Icebox</span>
         </div>
         <ul id="doing" class="block__list block__list_words">
             <li>бегемот</li>
@@ -137,6 +131,14 @@
         dialogInst.open();
         return false;
     });
+    $("[name='changeItemStatus']").click(function () {
+        var itemID =  $(this).attr("itemid");
+
+
+        return false;
+    });
+
+    //remodal==============================================
 
 
     $(document).on('opening', '.remodal', function () {

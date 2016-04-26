@@ -128,8 +128,6 @@ function MoveCrossList(itemId, newIndex, oldListID ,newListID)
 		}
 	});
 
-
-
 	Sortable.create(byId('doing'), {
 	    group: "mygroup",
 		animation: 150,
