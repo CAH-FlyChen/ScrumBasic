@@ -86,8 +86,8 @@
 
         .item_options{
             display:inline-block;
-            width:50px;
             float:right;
+            margin-right:3px;
         }
 
 /*h1 {

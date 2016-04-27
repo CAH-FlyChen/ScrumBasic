@@ -24,6 +24,23 @@ function MoveCrossList(itemId, newIndex, oldListID ,newListID)
         }
     });
 }
+
+function ChangeStatus(itemId) {
+    $.ajax({
+        url: "UserStory/ChangeStatus",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ ItemID: itemId, CurrentStatusCode: "" }),
+        success: function (response) {
+            //response ? alert(response): alert("It didn't work.");
+            //window.location.href = window.location.href;
+            $("a[BtnType='StatusBtn'][itemid='"+itemId+"']")[0].text = response;
+        }
+    });
+}
+
+
+
 (function () {
 	'use strict';
 

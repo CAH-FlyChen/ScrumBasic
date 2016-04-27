@@ -46,7 +46,7 @@ namespace ScrumBasic.Controllers
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = Mapper.Map<UserStoryViewModel>(us);
-                m.StatusName = StoryStatusList.GetStatusText(m.Status);
+                m.StatusName = StoryStatusList.GetStatusText(m.StatusCode);
                 if (m.ListID == "backlog")
                 {
                     models.BacklogItemCount += 1;
@@ -91,7 +91,7 @@ namespace ScrumBasic.Controllers
             userStoryViewModel.Content = "";
             userStoryViewModel.ID = Guid.NewGuid().ToString("N");
             userStoryViewModel.Point = 0;
-            userStoryViewModel.Status = StoryStatusList.未开始;
+            userStoryViewModel.StatusCode = StoryStatusList.未开始;
             return PartialView(userStoryViewModel);
         }
 
@@ -135,7 +135,7 @@ namespace ScrumBasic.Controllers
                 return HttpNotFound();
             }
 
-            us.Status = p.TargetStatus;
+            us.StatusCode = p.TargetStatus;
             await _context.SaveChangesAsync();
             return Json(true);
             //return View();
@@ -222,7 +222,7 @@ namespace ScrumBasic.Controllers
             story.Content = vm.Content;
             story.ItemTypeCode = vm.ItemTypeCode;
             story.Point = vm.Point;
-            story.Status = vm.Status;
+            story.StatusCode = vm.StatusCode;
             _context.SaveChanges();
 
             return RedirectToAction("Index");
@@ -238,12 +238,18 @@ namespace ScrumBasic.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ChangeStatus(ChangeStatusParam p)
+        public async Task<IActionResult> ChangeStatus([FromBody]ChangeStatusParam p)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _context.
+                var item = _context.UserStories.Single(t => t.ID == p.ItemID);
+                var s = StoryStatusList.GetNextStatus(item.StatusCode);
+                item.StatusCode = s.Value;
+                await _context.SaveChangesAsync();
+                return Json(s.Name);
             }
+
+            return null;
         }
 
 

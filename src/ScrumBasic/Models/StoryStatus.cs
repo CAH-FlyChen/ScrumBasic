@@ -14,7 +14,7 @@ namespace ScrumBasic.Models
     public class StoryStatusList
     {
         private static List<StoryStatus> status = new List<StoryStatus>();
-        public static string 开始 { get { return "NotStarted"; } }
+        public static string 未开始 { get { return "NotStarted"; } }
         public static string 完成 { get { return "InProgress"; } }
         public static string 已完成 { get { return "Complete"; } }
         public static string 提交审批 { get { return "Approve"; } }
@@ -26,7 +26,7 @@ namespace ScrumBasic.Models
         static StoryStatusList()
         {
             string[] namesValues = new string[] {
-                "开始", "NotStarted",
+                "未开始", "NotStarted",
                 "完成", "InProgress",
                 "已完成", "Complete",
                 "提交审批", "Approve",
@@ -66,7 +66,17 @@ namespace ScrumBasic.Models
 
         public static StoryStatus GetNextStatus(string statusCode)
         {
-
+            for(int i=0;i< status.Count;i++)
+            {
+                if(status[i].Value==statusCode)
+                {
+                    if ((i + 1 )<= status.Count)
+                        return status[i + 1];
+                    else
+                        return status[0];
+                }
+            }
+            return null;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ScrumBasic.Models
         /// <summary>
         /// 未开始 已完成 。。。
         /// </summary>
-        public string Status { get; set; }
+        public string StatusCode { get; set; }
         /// <summary>
         /// 列表ID  current backlogice 等
         /// </summary>
