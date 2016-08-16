@@ -25,16 +25,22 @@ function MoveCrossList(itemId, newIndex, oldListID ,newListID)
     });
 }
 
-function ChangeStatus(itemId) {
+function ChangeStatus(itemId,result,scode) {
     $.ajax({
         url: "UserStory/ChangeStatus",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ ItemID: itemId, CurrentStatusCode: "" }),
+        data: JSON.stringify({ ItemID: itemId, ApprovalResult: result }),
         success: function (response) {
-            //response ? alert(response): alert("It didn't work.");
-            //window.location.href = window.location.href;
-            $("a[BtnType='StatusBtn'][itemid='"+itemId+"']")[0].text = response;
+            var buttons = $("a[BtnType='StatusBtn'][itemid='" + itemId + "']")[0];
+            var p = buttons.parentNode;
+            $(p).html(response);
+            $("a[BtnType='StatusBtn'][itemid='" + itemId + "']").click(function () {
+                    var itemID = $(this).attr("itemid");
+                    //alert(itemID);
+                    ChangeStatus(itemID);
+                    return false;
+            });
         }
     });
 }
@@ -88,17 +94,16 @@ function ChangeStatus(itemId) {
 		};
 	}
 
-	Sortable.create(byId('backlog'), {
+	Sortable.create(byId('Backlog'), {
 	    group: "mygroup",
 	    animation: 150,
 	    onAdd: function (evt) {
 	        console.log('onAdd.todo:', [evt.item, evt.from]);
-	        //alert(evt.item.id);
-	        //Move(evt.itemId, 2);
+	        MoveCrossList($(evt.item.children[0].children[0]).attr("itemid"), evt.newIndex, evt.from.id, evt.to.id);
 	    },
 	    onUpdate: function (evt) {
 	        console.log('onUpdate.todo:', [evt.item, evt.from]);
-	        Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "backlog");
+	        Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Backlog");
 	    },
 	    onRemove: function (evt) { console.log('onRemove.todo:', [evt.item, evt.from]); },
 	    onStart: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
@@ -106,7 +111,7 @@ function ChangeStatus(itemId) {
 	    onEnd: function (evt) { console.log('onEnd.todo:', [evt.item, evt.from]); }
 	});
 
-	Sortable.create(byId('current'), {
+	Sortable.create(byId('Current'), {
 	    group: "mygroup",
 		animation: 150,
 		//store: {
@@ -125,6 +130,7 @@ function ChangeStatus(itemId) {
 		},
 		onUpdate: function (evt) {
 		    console.log('onUpdate.backlog:', [evt.item, evt.from]);
+		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Backlog");
 		},
 		onRemove: function (evt) {
 
@@ -136,7 +142,7 @@ function ChangeStatus(itemId) {
 		onStart: function (evt) { console.log('onStart.backlog:', [evt.item, evt.from]); },
 		onSort: function (evt) {
 		    console.log('onSort.backlog:', [evt.item, evt.from]);
-		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "current");
+		    //Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Current");
 		},
 		onEnd: function (evt) {
 		    console.log('onEnd.backlog:', [evt.item, evt.from]);
@@ -145,7 +151,7 @@ function ChangeStatus(itemId) {
 		}
 	});
 
-	Sortable.create(byId('doing'), {
+	Sortable.create(byId('Doing'), {
 	    group: "mygroup",
 		animation: 150,
 		onAdd: function (evt) {
@@ -163,7 +169,7 @@ function ChangeStatus(itemId) {
 		    console.log('onEnd.doing:', evt.item);
 		}
 	});
-	Sortable.create(byId('done'), {
+	Sortable.create(byId('Done'), {
 	    group: "mygroup",
 	    animation: 150,
 	    onAdd: function (evt) {

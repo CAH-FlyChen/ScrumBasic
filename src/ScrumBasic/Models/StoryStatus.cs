@@ -1,79 +1,96 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using ScrumBasic.Data;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScrumBasic.Models
 {
+    [Table("DM_StoryStatus")]
     public class StoryStatus
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        [Key]
+        public string Code { get; set; }
+        public string Text { get; set; }
+
+        public string ButtonDisplayName { get; set; }
         public int Order { get; set; }
     }
+
+
+
+
+
     public class StoryStatusList
     {
         private static List<StoryStatus> status = new List<StoryStatus>();
-        public static string 未开始 { get { return "NotStarted"; } }
-        public static string 完成 { get { return "InProgress"; } }
-        public static string 已完成 { get { return "Complete"; } }
-        public static string 提交审批 { get { return "Approve"; } }
-        public static string 审批通过 { get { return "Approval"; } }
-        public static string 审批拒绝 { get { return "Rejected"; } }
-        public static string 关闭 { get { return "Close"; } }
-        public static string 已关闭 { get { return "Closed"; } }
 
-        static StoryStatusList()
+
+        public static List<StoryStatus> GetStatusList(ApplicationDbContext ctx)
         {
-            string[] namesValues = new string[] {
-                "未开始", "NotStarted",
-                "完成", "InProgress",
-                "已完成", "Complete",
-                "提交审批", "Approve",
-                "审批通过", "Approval",
-                "审批拒绝", "Rejected",
-                "关闭", "Close",
-                "已关闭", "Closed"
-            };
-            for (int i = 0; i < namesValues.Length; i += 2)
+            if (!status.Any())
             {
-                StoryStatus ss = new StoryStatus();
-                ss.Name = namesValues[i];
-                ss.Value = namesValues[i + 1];
-                ss.Order = i;
-                status.Add(ss);
+                    status = ctx.StoryStatus.OrderBy(t=>t.Order).ToList();
             }
-        }
-
-
-        public static List<StoryStatus> GetStatusList()
-        {
             return status;
         }
 
-        public static string GetStatusText(string code)
+        public static string GetStatusText(string code, ApplicationDbContext ctx)
         {
-            var r = status.SingleOrDefault(x => x.Value==code);
+            GetStatusList(ctx);
+            var r = status.SingleOrDefault(x => x.Code==code);
             if(default(KeyValuePair<string, string>).Equals(r))
             {
                 return ""; 
             }
             else
             {
-                return r.Name;
+                return r.Text;
             }
         }
 
-        public static StoryStatus GetNextStatus(string statusCode)
+        public static StoryStatus GetNextStatus(string statusCode, ApplicationDbContext ctx)
         {
+            GetStatusList(ctx);
             for(int i=0;i< status.Count;i++)
             {
-                if(status[i].Value==statusCode)
+                if(status[i].Code==statusCode)
                 {
                     if ((i + 1 )<= status.Count)
                         return status[i + 1];
                     else
                         return status[0];
+                }
+            }
+            return null;
+        }
+        public static StoryStatus GetNextStatusButtonDisplay(string statusCode, ApplicationDbContext ctx)
+        {
+            GetStatusList(ctx);
+            for (int i = 0; i < status.Count; i++)
+            {
+                if (status[i].Code == statusCode)
+                {
+                    if ((i + 1) <= status.Count)
+                        return status[i + 1];
+                    else
+                        return status[0];
+                }
+            }
+            return null;
+        }
+        public static StoryStatus GetStatusButtonDisplay(string statusCode, ApplicationDbContext ctx)
+        {
+            GetStatusList(ctx);
+
+            for (int i = 0; i < status.Count; i++)
+            {
+                if (status[i].Code == statusCode)
+                {
+                        return status[i];
                 }
             }
             return null;

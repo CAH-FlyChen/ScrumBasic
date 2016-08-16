@@ -1,10 +1,10 @@
-﻿@model ScrumBasic.Models.UserStory
+﻿@model ScrumBasic.ViewModels.Sprint.UserStoryViewModel
 
 <form asp-action="Edit" id="StoryItemEditForm">
     <div class="form-horizontal">
         <h4>编辑用户故事</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />
         <div class="form-group">
             <label asp-for="Content" class="col-md-2 control-label">内容</label>
@@ -62,28 +62,10 @@
 
 
         <div class="form-group">
-            <label asp-for="Status" class="col-md-2 control-label">状态</label>
+            <label asp-for="StatusCode" class="col-md-2 control-label">状态</label>
             <div class="col-md-10">
-
-                @Html.DropDownListFor(
-        model => model.Status,
-        new SelectList(
-            new List<Object>
-                {
-                    new { value = 0 , text = "未开始"  },
-                    new { value = 1 , text = "进行中" },
-                    new { value = 2 , text = "已完成"},
-                    new { value = 3 , text = "待审批"},
-                    new { value = 4 , text = "通过"},
-                    new { value = 5 , text = "拒绝"},
-                    new { value = 6 , text = "关闭"},
-                 },
-                "value",
-                "text",
-                Model.Status
-             ), null, new { @class = "form-control" }
-        )
-                <span asp-validation-for="Status" class="text-danger" />
+                @Html.DropDownListFor(m => m.StatusCode, Model.GetStatusSelectList(), "请选择", new { @class = "form-control" });
+                <span asp-validation-for="StatusCode" class="text-danger" />
             </div>
         </div>
 

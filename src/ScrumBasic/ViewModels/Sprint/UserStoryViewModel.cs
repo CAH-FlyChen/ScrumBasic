@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ScrumBasic.Data;
+using ScrumBasic.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,6 +11,15 @@ namespace ScrumBasic.ViewModels.Sprint
 {
     public class UserStoryViewModel
     {
+        private ApplicationDbContext ctx;
+        public UserStoryViewModel()
+        {
+
+        }
+        public UserStoryViewModel(ApplicationDbContext ctx)
+        {
+            this.ctx = ctx;
+        }
         public string ID { get; set; }
         public string Content { get; set; }
         public int Point { get; set; }
@@ -23,5 +35,27 @@ namespace ScrumBasic.ViewModels.Sprint
         public string ListID { get; set; }
         public int Order { get; set; }
         public DateTime CreateTime { get; set; }
+
+        public IEnumerable<SelectListItem> GetStatusSelectList()
+        {
+            var selectList = StoryStatusList.GetStatusList(ctx).OrderBy(t => t.Order).Select(a => new SelectListItem
+            {
+                Text = a.Text,
+                Value = a.Code
+            });
+            return selectList;
+        }
+
+        public string DefaultStoryCode
+        {
+            get
+            {
+                return "Unstarted";
+            }
+        }
+        public string ButtonDisplayName
+        {
+            get;set;
+        }
     }
 }

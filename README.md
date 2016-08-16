@@ -1,2 +1,0 @@
-# ScrumBasic
-my readme

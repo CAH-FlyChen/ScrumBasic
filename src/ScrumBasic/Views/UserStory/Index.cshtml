@@ -11,10 +11,10 @@
             <span>Backlog(@Model.BacklogItemCount)</span>
             @Html.ActionLink("+", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
         </div>
-        <ul id="backlog" class="block__list block__list_words">
+        <ul id="Backlog" class="block__list block__list_words">
             @foreach (var t in Model.BacklogItems)
             {
-                @if (t.ListID != "backlog")
+                @if (t.ListID != "Backlog")
                 {
                     continue;
                 }
@@ -23,11 +23,11 @@
                         @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID}, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID , @Order = @t.Order })
                     </span>
                     <div class="item_content">@t.Content</div>
-                    <div class="item_options">
+                    @*<div class="item_options">
                         <a class="btn btn-info btn-xs" name="changeItemStatus">
                                 <sapn>@t.StatusName</sapn>
                         </a>
-                    </div>
+                    </div>*@
                 </li>
             }
         </ul>
@@ -36,10 +36,10 @@
         <div class="title">
             <span>Current(@Model.CurrentItemCount)</span>
         </div>
-        <ul id="current" class="block__list block__list_words">
+        <ul id="Current" class="block__list block__list_words">
             @foreach (var t in Model.CurrentItems)
             {
-                @if (t.ListID != "current")
+                @if (t.ListID != "Current")
                 {
                     continue;
                 }
@@ -50,11 +50,9 @@
 
                     <div class="item_content">@t.Content</div>
                     <div class="item_options">
-                        @Html.ActionLink(@t.StatusName, "ChangeStatus", new { itemID = @t.ID }, new { @class = "btn btn-info btn-xs", @Name = "changeItemStatus", @ItemID = @t.ID,@BtnType="StatusBtn" })
-
+                     @*@{Html.RenderPartial("PartialStatusButton", t);}*@
+                        @await Component.InvokeAsync("StatusButton", new { model = t })
                     </div>
-
-
                 </li>
             }
         </ul>
@@ -64,7 +62,7 @@
         <div class="title">
             <span>Icebox</span>
         </div>
-        <ul id="doing" class="block__list block__list_words">
+        <ul id="Doing" class="block__list block__list_words">
             <li>бегемот</li>
             <li>корм</li>
             <li>антон</li>
@@ -77,7 +75,7 @@
     </div>
     <div class="block">
         <div class="title">Done</div>
-        <ul id="done" class="block__list block__list_words">
+        <ul id="Done" class="block__list block__list_words">
             <li>бегемот</li>
             <li>корм</li>
             <li>антон</li>

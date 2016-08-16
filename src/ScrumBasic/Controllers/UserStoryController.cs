@@ -1,16 +1,15 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
 using ScrumBasic.Models;
 using ScrumBasic.ViewModels.Sprint;
 using System.Collections.Generic;
-using Microsoft.Extensions.OptionsModel;
 using AutoMapper;
 using System;
-using System.Collections;
-using Microsoft.AspNet.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using ScrumBasic.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ScrumBasic.Controllers
 {
@@ -20,17 +19,17 @@ namespace ScrumBasic.Controllers
         private IOptions<Startup.MyOptions> _optons { get; set; }
         public UserStoryListViewModel models = new UserStoryListViewModel();
         private ApplicationDbContext _context;
+        private IMapper map;
         /// <summary>
         /// 注入
         /// </summary>
         /// <param name="context"></param>
         /// <param name="opt"></param>
-        public UserStoryController(ApplicationDbContext context, IOptions<Startup.MyOptions> opt)
+        public UserStoryController(ApplicationDbContext context, IOptions<Startup.MyOptions> opt, IMapper map)
         {
             _optons = opt;
             _context = context;
-            Mapper.CreateMap(typeof(UserStoryViewModel), typeof(UserStory));
-            Mapper.CreateMap(typeof(UserStory), typeof(UserStoryViewModel));
+            this.map = map;
         }
 
 
@@ -45,14 +44,15 @@ namespace ScrumBasic.Controllers
             List<UserStory> userStories = await _context.UserStories.OrderBy(t=>t.Order).ToListAsync<UserStory>();
             foreach (var us in userStories)
             {
-                UserStoryViewModel m = Mapper.Map<UserStoryViewModel>(us);
-                m.StatusName = StoryStatusList.GetStatusText(m.StatusCode);
-                if (m.ListID == "backlog")
+                UserStoryViewModel m = map.Map<UserStoryViewModel>(us);
+                //m.StatusName = StoryStatusList.GetStatusText(m.StatusCode,_context);
+                m.ButtonDisplayName = StoryStatusList.GetStatusButtonDisplay(m.StatusCode, _context).ButtonDisplayName;
+                if (m.ListID == "Backlog")
                 {
                     models.BacklogItemCount += 1;
                     models.BacklogItems.Add(m);
                 } 
-                else if (m.ListID == "current")
+                else if (m.ListID == "Current")
                 {
                     models.CurrentItemCount += 1;
                     models.CurrentItems.Add(m);
@@ -87,11 +87,11 @@ namespace ScrumBasic.Controllers
 
         public IActionResult Create()
         {
-            UserStoryViewModel userStoryViewModel = new UserStoryViewModel();
+            UserStoryViewModel userStoryViewModel = new UserStoryViewModel(_context);
             userStoryViewModel.Content = "";
             userStoryViewModel.ID = Guid.NewGuid().ToString("N");
             userStoryViewModel.Point = 0;
-            userStoryViewModel.StatusCode = StoryStatusList.未开始;
+
             return PartialView(userStoryViewModel);
         }
 
@@ -103,8 +103,9 @@ namespace ScrumBasic.Controllers
             if (ModelState.IsValid)
             {
                 //mapping   
-                UserStory usNew = Mapper.Map<UserStory>(userStoryViewModel);
+                UserStory usNew = map.Map<UserStory>(userStoryViewModel);
                 usNew.ID = Guid.NewGuid().ToString("N");
+                usNew.StatusCode = "Unstarted";
                 usNew.CreateTime = DateTime.Now;
                 usNew.Order = _context.UserStories.Max(t => t.Order)+1;
                 usNew.ListID = "Backlog";
@@ -139,6 +140,12 @@ namespace ScrumBasic.Controllers
             await _context.SaveChangesAsync();
             return Json(true);
             //return View();
+        }
+
+        private IActionResult HttpNotFound()
+        {
+            Response.StatusCode = 404;
+            return null;
         }
 
         public class ChangeOrderParam
@@ -203,7 +210,8 @@ namespace ScrumBasic.Controllers
             {
                 return HttpNotFound();
             }
-            return PartialView(story);
+            UserStoryViewModel usvm = map.Map<UserStoryViewModel>(story);
+            return PartialView(usvm);
         }
 
         [HttpPost]
@@ -234,8 +242,29 @@ namespace ScrumBasic.Controllers
         {
             public string ItemID { get; set; }
             public string CurrentStatusCode { get; set; }
+            public string ApprovalResult { get; set; }
         }
 
+
+        //[HttpPost]
+        //public async Task<IActionResult> ChangeStatus([FromBody]ChangeStatusParam p)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var item = _context.UserStories.Single(t => t.ID == p.ItemID);
+        //        var s = StoryStatusList.GetNextStatusButtonDisplay(item.StatusCode,_context);
+        //        if (string.IsNullOrEmpty(p.ApprovalResult))
+        //            item.StatusCode = s.Code;
+        //        else if (p.ApprovalResult == "Y")
+        //            item.StatusCode = "Accepted";
+        //        else
+        //            item.StatusCode = "Rejected";
+        //        await _context.SaveChangesAsync();
+        //        return Json(s.ButtonDisplayName);
+        //    }
+
+        //    return null;
+        //}
 
         [HttpPost]
         public async Task<IActionResult> ChangeStatus([FromBody]ChangeStatusParam p)
@@ -243,10 +272,18 @@ namespace ScrumBasic.Controllers
             if (ModelState.IsValid)
             {
                 var item = _context.UserStories.Single(t => t.ID == p.ItemID);
-                var s = StoryStatusList.GetNextStatus(item.StatusCode);
-                item.StatusCode = s.Value;
+                var s = StoryStatusList.GetNextStatusButtonDisplay(item.StatusCode, _context);
+                if (string.IsNullOrEmpty(p.ApprovalResult))
+                    item.StatusCode = s.Code;
+                else if (p.ApprovalResult == "Y")
+                    item.StatusCode = "Accepted";
+                else
+                    item.StatusCode = "Rejected";
                 await _context.SaveChangesAsync();
-                return Json(s.Name);
+                
+                UserStoryViewModel model = map.Map<UserStoryViewModel>(item);
+                model.ButtonDisplayName = s.ButtonDisplayName;
+                return ViewComponent("StatusButton", new { model = model });
             }
 
             return null;
@@ -295,7 +332,7 @@ namespace ScrumBasic.Controllers
         //    await _context.SaveChangesAsync();
         //    return RedirectToAction("Index");
         //}
+
+
     }
-
-
 }

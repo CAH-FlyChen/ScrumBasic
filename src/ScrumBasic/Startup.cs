@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ScrumBasic.Data;
 using ScrumBasic.Models;
 using ScrumBasic.Services;
+using AutoMapper;
 
 namespace ScrumBasic
 {
@@ -23,10 +25,9 @@ namespace ScrumBasic
         }
         public Startup(IHostingEnvironment env)
         {
-            // Set up configuration sources.
-
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
@@ -42,12 +43,11 @@ namespace ScrumBasic
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; set; }
+        public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //添加自定义对象
             services.Configure<MyOptions>(myOptions =>
             {
                 myOptions.Option1 = "test";
@@ -56,10 +56,8 @@ namespace ScrumBasic
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -70,6 +68,15 @@ namespace ScrumBasic
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton<IMapper>(mapper);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,28 +89,21 @@ namespace ScrumBasic
 
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                app.UseBrowserLink();
+                //执行合并代码
+                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
+.CreateScope())
+                {
+                    serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
+                    serviceScope.ServiceProvider.GetService<ApplicationDbContext>().EnsureSeedData();
+                }
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-
-                // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
-                try
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                        .CreateScope())
-                    {
-                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
-                             .Database.Migrate();
-                    }
-                }
-                catch { }
             }
-
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
             app.UseApplicationInsightsExceptionTelemetry();
 
@@ -111,7 +111,7 @@ namespace ScrumBasic
 
             app.UseIdentity();
 
-            // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
+            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
             {
@@ -120,8 +120,5 @@ namespace ScrumBasic
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }
