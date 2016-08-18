@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ScrumBasic.Models;
-using ScrumBasic.ViewModels.Sprint;
+using ScrumBasic.Models.SprintViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

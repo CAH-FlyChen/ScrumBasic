@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ScrumBasic.ViewModels.Sprint;
+using ScrumBasic.Models.SprintViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

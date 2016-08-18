@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ScrumBasic.Models;
-using ScrumBasic.ViewModels.Sprint;
+using ScrumBasic.Models.SprintViewModels;
 using System.Collections.Generic;
 using AutoMapper;
 using System;
