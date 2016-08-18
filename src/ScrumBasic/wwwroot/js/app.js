@@ -1,26 +1,26 @@
 function Move(itemId,oldIndex,newIndex,oldListID)
 {
+    jQuery('#activity_pane').showLoading();
     $.ajax({
         url: "UserStory/ChangeOrder",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex, NewIndex: newIndex, OldListID: oldListID, NewListID: "" }),
         success: function (response) {
-            response ? alert("It worked!")
-            : alert("It didn't work.");
+            jQuery('#activity_pane').hideLoading();
         }
     });
 }
 function MoveCrossList(itemId, newIndex, oldListID ,newListID)
 {
+    jQuery('#activity_pane').showLoading();
     $.ajax({
         url: "UserStory/ChangeOrder",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({ ItemId: itemId, OldIndex: -1, NewIndex: newIndex, OldListID: oldListID, NewListID: newListID }),
         success: function (response) {
-            response ? alert("It worked!")
-            : alert("It didn't work.");
+            jQuery('#activity_pane').hideLoading();
         }
     });
 }

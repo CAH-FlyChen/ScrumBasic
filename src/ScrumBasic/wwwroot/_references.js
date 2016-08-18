@@ -1,5 +1,6 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="js/app.js" />
+/// <reference path="js/jquery.showloading.js" />
 /// <reference path="js/remodal.js" />
 /// <reference path="js/site.js" />
 /// <reference path="js/sortable.js" />

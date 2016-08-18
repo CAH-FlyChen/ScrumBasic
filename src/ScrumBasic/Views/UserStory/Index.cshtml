@@ -5,10 +5,13 @@
     Layout = "~/Views/Shared/_Layout_project.cshtml";
     //List<UserStoryViewModel> data_story_items = ViewData["story_items"] as List<UserStoryViewModel>;
 }
-<div class="app_container">
+<div class="app_container" id="activity_pane">
+
+
+
     <div class="block">
         <div class="title">
-            <span>Backlog(@Model.BacklogItemCount)</span>
+            <span>Backlog&nbsp;&nbsp;[@Model.BacklogItemCount]</span>
             @Html.ActionLink("+", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
         </div>
         <ul id="Backlog" class="block__list block__list_words">
@@ -34,7 +37,7 @@
     </div>
     <div class="block">
         <div class="title">
-            <span>Current(@Model.CurrentItemCount)</span>
+            <span>Current&nbsp;&nbsp;[@Model.CurrentItemCount]</span>
         </div>
         <ul id="Current" class="block__list block__list_words">
             @foreach (var t in Model.CurrentItems)
@@ -100,14 +103,20 @@
 </div>
 <div class="remodal" data-remodal-id="modalContent">
     <button data-remodal-action="close" class="remodal-close"></button>
-
         <div style="text-align:left" id="remodalDialog">
-
         </div>
         <br>
-    <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
-    <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
-</div>
+    <div class="row">
+        <div class="col-md-6 span7 text-center">
+            <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
+        </div>
+        <div class="col-md-6 span7 text-center">
+            <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
+        </div>
+    </div>
+
+
+
 
 <script>
     var data = @Html.Raw(Json.Serialize(Model));

@@ -1,3 +1,14 @@
+.center {
+ width: auto;
+ display: table;
+ margin-left: auto;
+ margin-right: auto;
+}
+.text-center {
+ text-align: center;
+}
+
+
 .container {
     width: 100%;
   }
@@ -26,7 +37,7 @@
 	padding: 3px 10px;
 	display: inline-block;
 	position: relative;
-	background-color: #FF7373;
+	background-color: #222;
 	z-index: 1000;
 }
 .block__list {
