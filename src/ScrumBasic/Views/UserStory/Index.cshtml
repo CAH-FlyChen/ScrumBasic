@@ -3,194 +3,96 @@
 @{
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
-    //List<UserStoryViewModel> data_story_items = ViewData["story_items"] as List<UserStoryViewModel>;
 }
-<div class="app_container" id="activity_pane">
-
-
-
-    <div class="block">
-        <div class="title">
-            <span>Backlog&nbsp;&nbsp;[@Model.BacklogItemCount]</span>
-            @Html.ActionLink("+", "Create",new { }, new {style="float:right", @class = "btn btn-success btn-xs", @Name = "AddItem" })
+<div class="row fill">
+    <!--Menu-->
+    <div class="col-md-2 slide_bar">
+        <div class="block_header">
+            <span class="glyphicon glyphicon-menu-hamburger block_header_left_padding block_header_icon_color" 
+                  aria-hidden="true"></span>
         </div>
-        <ul id="Backlog" class="block__list block__list_words">
-            @foreach (var t in Model.BacklogItems)
-            {
-                @if (t.ListID != "Backlog")
-                {
-                    continue;
-                }
-                <li>
-                    <span style="float:left;color:green;margin-left:2px">
-                        @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID}, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID , @Order = @t.Order })
-                    </span>
-                    <div class="item_content">@t.Content</div>
-                    @*<div class="item_options">
-                        <a class="btn btn-info btn-xs" name="changeItemStatus">
-                                <sapn>@t.StatusName</sapn>
-                        </a>
-                    </div>*@
-                </li>
-            }
-        </ul>
+        <div class="block_content_heigth_nothum" style="padding-left:10px">
+            <div>Add Story</div>
+        </div>
     </div>
-    <div class="block">
-        <div class="title">
-            <span>Current&nbsp;&nbsp;[@Model.CurrentItemCount]</span>
+    <!--Current-->
+    <div class="col-md-3 block">
+        <div class="block_header">
+            <span class="glyphicon glyphicon-remove block_header_left_padding block_header_icon_color" 
+                  aria-hidden="true"></span>
+            <spans>Current</spans>
+            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" 
+                  aria-hidden="true"></span>
         </div>
-        <ul id="Current" class="block__list block__list_words">
+        <div class="item_thumb">·@Model.CurrentItemCount    Aug 15-Current   pts: 0 of 10  20%</div>
+        <div class="block_content_heigth">
+            <ul id="Current" class="block_content">
             @foreach (var t in Model.CurrentItems)
             {
-                @if (t.ListID != "Current")
-                {
-                    continue;
-                }
                 <li>
-                    <span style="float:left;color:green;margin-left:2px">
-                        @Html.ActionLink(t.Point.ToString(), "EditItem", new { itemID = @t.ID }, new { @class = "btn btn-warning btn-xs", @Name = "EditItem", @ItemID = @t.ID, @Order = @t.Order })
-                    </span>
-
-                    <div class="item_content">@t.Content</div>
-                    <div class="item_options">
-                     @*@{Html.RenderPartial("PartialStatusButton", t);}*@
-                        @await Component.InvokeAsync("StatusButton", new { model = t })
-                    </div>
+                    <span class="glyphicon glyphicon-triangle-right"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <div style="display:inline-block">@t.Content (Gil)</div>
+                    @await Component.InvokeAsync("StatusButton", new { model = t })
                 </li>
             }
-        </ul>
-    </div>
-
-    <div class="block">
-        <div class="title">
-            <span>Icebox</span>
-        </div>
-        <ul id="Doing" class="block__list block__list_words">
-            <li>бегемот</li>
-            <li>корм</li>
-            <li>антон</li>
-            <li>сало</li>
-            <li>железосталь</li>
-            <li>валик</li>
-            <li>кровать</li>
-            <li>краб</li>
-        </ul>
-    </div>
-    <div class="block">
-        <div class="title">Done</div>
-        <ul id="Done" class="block__list block__list_words">
-            <li>бегемот</li>
-            <li>корм</li>
-            <li>антон</li>
-            <li>сало</li>
-            <li>железосталь</li>
-            <li>валик</li>
-            <li>кровать</li>
-            <li>краб</li>
-        </ul>
-    </div>
-    @*
-
-        <div data-force="18" class="layer block" style="left: 58%; top: 143px; width: 40%;">
-            <div class="layer title">List B</div>
-            <ul id="bar" class="block__list block__list_tags">
-                <li>казнить</li>
-                <li>,</li>
-                <li>нельзя</li>
-                <li>помиловать</li>
             </ul>
-        </div>*@
-</div>
-<div class="remodal" data-remodal-id="modalContent">
-    <button data-remodal-action="close" class="remodal-close"></button>
-        <div style="text-align:left" id="remodalDialog">
-        </div>
-        <br>
-    <div class="row">
-        <div class="col-md-6 span7 text-center">
-            <button data-remodal-action="confirm" class="remodal-confirm">保存</button>
-        </div>
-        <div class="col-md-6 span7 text-center">
-            <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
         </div>
     </div>
+    <!--BackLog-->
+    <div class="col-md-3 block">
+        <div class="block_header">
+            <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
+            <spans>Backlog</spans>
+            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"></span>
+        </div>
+        <div class="item_thumb">·@Model.BacklogItemCount    Aug 15-Current   pts: 0 of 10</div>
+        <div class="block_content_heigth">
+            <ul id="Backlog" class="block_content">
+            @foreach (var t in Model.BacklogItems)
+            {
+                <li>
+                    <span class="glyphicon glyphicon-triangle-right"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <div style="display:inline-block">@t.Content (Gil)</div>
 
+                    @Html.ActionLink("开始", "StatusButton",
+                        new { itemID = @t.ID, result = "", scode = t.StatusCode },
+                        new
+                        {
+                            @class = "btn btn-info btn-xs item_status_button",
+                            @Name = "changeItemStatus",
+                            @ItemID = @t.ID,
+                            @BtnType = "StatusBtn"
+                        })
+                    }
+                </li>
+            }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4 block">
+        <div class="block_header">
+            <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
+            <spans>ICE Box</spans>
+            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"></span>
+        </div>
+        <div class="item_thumb">162    Aug 15-Current   pts: 0 of 10</div>
+        <div class="block_content_heigth">
+            <div class="block_content">
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
 
-
-
-<script>
-    var data = @Html.Raw(Json.Serialize(Model));
-    var dialogInst = $('[data-remodal-id=modalContent]').remodal();
-    var dialogMode = "create";
-
-    $("[name='AddItem']").click(function () {
-        dialogMode = "create";
-        var url = $(this).attr('href');
-        $('#remodalDialog').load(url);
-        dialogInst.open();
-        return false;
-    });
-    $("[name='EditItem']").click(function () {
-        dialogMode = "edit";
-        var itemID =  $(this).attr("itemid");
-        var url = $(this).attr('href');
-        $('#remodalDialog').load(url);
-        dialogInst.open();
-        return false;
-    });
-    $("[name='changeItemStatus']").click(function () {
-        var itemID =  $(this).attr("itemid");
-        //alert(itemID);
-        ChangeStatus(itemID);
-        return false;
-    });
-
-    //remodal==============================================
-
-
-    $(document).on('opening', '.remodal', function () {
-        console.log('Modal is opening');
-
-    });
-
-    $(document).on('opened', '.remodal', function () {
-        console.log('Modal is opened');
-    });
-
-    $(document).on('closing', '.remodal', function (e) {
-
-        // Reason: 'confirmation', 'cancellation'
-        console.log('Modal is closing' + (e.reason ? ', reason: ' + e.reason : ''));
-    });
-
-    $(document).on('closed', '.remodal', function (e) {
-
-        // Reason: 'confirmation', 'cancellation'
-        console.log('Modal is closed' + (e.reason ? ', reason: ' + e.reason : ''));
-    });
-
-    $(document).on('confirmation', '.remodal', function () {
-        if (dialogMode == "create")
-        {
-            $("#StoryItemCreateForm").submit();
-        }
-        else if(dialogMode=="edit")
-        {
-            $("#StoryItemEditForm").submit();
-            
-        }
-
-    });
-
-    $(document).on('cancellation', '.remodal', function () {
-        console.log('Cancel button is clicked');
-    });
-
-
-
-
-</script>
-
-
-
-
+                <div class="item_preview">bbbb</div>
+                <div class="item_preview">bbbb</div>
+            </div>
+        </div>
+    </div>
+</div>
