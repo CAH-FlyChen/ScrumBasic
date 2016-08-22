@@ -21,6 +21,8 @@ html,body{
     padding-right:0px;
     color:#fff;
     background-color:#212121;
+    overflow:hidden;
+    overflow-y:hidden;
 }
 
 .block{
@@ -68,6 +70,14 @@ html,body{
 .block_header_icon_color{
     color:#5e5e5e;
 }
+/*添加当前按钮*/
+#btn_addCurrent:hover{
+    color:white;
+}
+/*添加backlog按钮*/
+#btn_addBacklog:hover{
+    color:white;
+}
 
 .block_content_heigth {
     height:100%;
@@ -88,18 +98,18 @@ html,body{
     font-size:8px;
 }
 
-    .block_content li {
-        height:26px;
-        line-height:26px;
-        background-color:#f4f4f4;
-        border-top:1px solid #fff;
-        border-bottom:1px solid #ddd;
-        display:inline-block;
-        width:100%;
-        /*内容字体颜色*/
-        color:black;
-        margin-bottom:0px;
-    }
+.block_content_li {
+    height:26px;
+    line-height:26px;
+    background-color:#f4f4f4;
+    border-top:1px solid #fff;
+    border-bottom:1px solid #ddd;
+    display:inline-block;
+    width:100%;
+    /*内容字体颜色*/
+    color:black;
+    margin-bottom:0px;
+}
 
 
 

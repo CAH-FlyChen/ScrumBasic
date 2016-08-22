@@ -160,45 +160,71 @@ namespace ScrumBasic.Controllers
         public async Task<IActionResult> ChangeOrder([FromBody] ChangeOrderParam p)
         {
             UserStory story = await _context.UserStories.SingleAsync(m => m.ID == p.ItemID);
-            if (story == null)
-            {
-                return HttpNotFound();
-            }
-            if(p.OldIndex==-1)
+            if (story == null) return HttpNotFound();
+
+            //跨列表
+            if (p.NewListID!=p.OldListID && p.NewListID!="" && p.OldListID!="")
             {
                 story.Order = p.NewIndex;
                 story.ListID = p.NewListID;
-
-                var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.ListID == p.OldListID).ToList();
-                foreach (var t in items)
-                    t.Order = t.Order - 1;
-
-                var itemsx = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.ListID == p.NewListID).ToList();
-                foreach (var t in itemsx)
-                    t.Order = t.Order + 1;
-
+                //分割位置下面的向上移动
+                //处理新列表。下移动新列表的分割条目后面的项目
+                var downItems = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.ListID == p.NewListID).OrderBy(t => t.Order).ToList();
+                for (int i = 0; i < downItems.Count; i++)
+                {
+                    var item = downItems[i];
+                    item.Order = i + 1 + p.NewIndex;
+                }
+                //处理源列表移出位置上移
+                var oldListItems = _context.UserStories.Where(t => t.Order > p.OldIndex && t.ListID == p.OldListID).OrderBy(t => t.Order).ToList();
+                for(int i=0;i<oldListItems.Count;i++)
+                {
+                    var item = oldListItems[i];
+                    item.Order = p.OldIndex + i;
+                }
+                
             }
             else
             {
+                //同列表
                 if (p.NewIndex > p.OldIndex)
                 {
-                    //向下
-                    var items = _context.UserStories.Where(t => t.Order <= p.NewIndex && t.Order > p.OldIndex && t.ListID == p.OldListID).ToList();
-                    foreach (var t in items)
-                        t.Order = t.Order - 1;
+                    //向下移动
+                    //找到在旧列表中 分割的位置上边的内容
+                    var upItems = _context.UserStories.Where(t => t.Order <= p.NewIndex && t.Order > p.OldIndex && t.ListID == p.OldListID && t.Order != p.OldIndex).OrderBy(t => t.Order).ToList();
+
+                    story.Order = p.NewIndex;
+                    for (int i = 0; i < upItems.Count; i++)
+                    {
+                        var item = upItems[i];
+                        item.Order = i + p.OldIndex;
+                    }
                 }
                 else
                 {
-                    var items = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.Order < p.OldIndex && t.ListID==p.OldListID).ToList();
-                    foreach (var t in items)
-                        t.Order = t.Order + 1;
+                    //向上移动
+                    //找到在旧列表中 分割的位置下边的内容
+                    var downItems = _context.UserStories.Where(t => t.Order >= p.NewIndex && t.Order < p.OldIndex && t.ListID == p.OldListID && t.Order != p.OldIndex).OrderBy(t => t.Order).ToList();
+
+                    story.Order = p.NewIndex;
+                    for (int i = 0; i < downItems.Count; i++)
+                    {
+                        var item = downItems[i];
+                        item.Order = i + 1 + p.NewIndex;
+                    }
                 }
-                story.Order = p.NewIndex;
             }
 
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+
+
+
+
+
         public async Task<IActionResult> EditItem(string itemId)
         {
             if (string.IsNullOrEmpty(itemId))

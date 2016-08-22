@@ -8,23 +8,26 @@ function Move(itemId,oldIndex,newIndex,oldListID)
         data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex, NewIndex: newIndex, OldListID: oldListID, NewListID: "" }),
         success: function (response) {
             jQuery('#activity_pane').hideLoading();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("error!\r\n"+textStatus);
+            jQuery('#activity_pane').hideLoading();
         }
     });
 }
-function MoveCrossList(itemId, newIndex, oldListID ,newListID)
+function MoveCrossList(itemId,oldIndex ,newIndex, oldListID ,newListID)
 {
     jQuery('#activity_pane').showLoading();
     $.ajax({
         url: "UserStory/ChangeOrder",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ ItemId: itemId, OldIndex: -1, NewIndex: newIndex, OldListID: oldListID, NewListID: newListID }),
+        data: JSON.stringify({ ItemId: itemId, OldIndex: oldIndex, NewIndex: newIndex, OldListID: oldListID, NewListID: newListID }),
         success: function (response) {
             jQuery('#activity_pane').hideLoading();
         }
     });
 }
-
 function ChangeStatus(itemId,result,scode) {
     $.ajax({
         url: "UserStory/ChangeStatus",
@@ -45,13 +48,22 @@ function ChangeStatus(itemId,result,scode) {
     });
 }
 
+$(function () {
+    $('#btn_addCurrent').click(function () {
+        //$('#区域id').load('页面名称');
+        var ul = $('#Current');
+        var li = ul.prepend("<li id='currentAddArea'></li>");
+        $("#currentAddArea").load("http://localhost:5000/userStory/create");
 
+    });
+    $('#btn_addBacklog').click(function () {
+        alert("ttttt");
+    });
+});
 
 (function () {
 	'use strict';
-
 	var byId = function (id) { return document.getElementById(id); },
-
 		loadScripts = function (desc, callback) {
 			var deps = [], key, idx = 0;
 
@@ -99,11 +111,11 @@ function ChangeStatus(itemId,result,scode) {
 	    animation: 150,
 	    onAdd: function (evt) {
 	        console.log('onAdd.todo:', [evt.item, evt.from]);
-	        MoveCrossList($(evt.item.children[0].children[0]).attr("itemid"), evt.newIndex, evt.from.id, evt.to.id);
+	        MoveCrossList($(evt.item).attr("itemid"),evt.oldIndex ,evt.newIndex, evt.from.id, evt.to.id);
 	    },
 	    onUpdate: function (evt) {
 	        console.log('onUpdate.todo:', [evt.item, evt.from]);
-	        Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Backlog");
+	        Move($(evt.item).attr("itemid"), evt.oldIndex, evt.newIndex, "Backlog");
 	    },
 	    onRemove: function (evt) { console.log('onRemove.todo:', [evt.item, evt.from]); },
 	    onStart: function (evt) { console.log('onStart.todo:', [evt.item, evt.from]); },
@@ -125,27 +137,27 @@ function ChangeStatus(itemId,result,scode) {
 		//	}
 		//},
 		onAdd: function (evt) {
-		    console.log('onAdd.backlog:', [evt.item, evt.from]);
-		    MoveCrossList($(evt.item.children[0].children[0]).attr("itemid"), evt.newIndex, evt.from.id, evt.to.id);
+		    console.log('onAdd.current:', [evt.item, evt.from]);
+		    MoveCrossList($(evt.item).attr("itemid"),evt.oldIndex, evt.newIndex, evt.from.id, evt.to.id);
 		},
 		onUpdate: function (evt) {
-		    console.log('onUpdate.backlog:', [evt.item, evt.from]);
-		    Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Backlog");
+		    console.log('onUpdate.current:', [evt.item, evt.from]);
+		    Move($(evt.item).attr("itemid"), evt.oldIndex, evt.newIndex, "Current");
 		},
 		onRemove: function (evt) {
 
 
-		    console.log('onRemove.backlog:', [evt.item, evt.from]);
+		    console.log('onRemove.current:', [evt.item, evt.from]);
 
 
 		},
-		onStart: function (evt) { console.log('onStart.backlog:', [evt.item, evt.from]); },
+		onStart: function (evt) { console.log('onStart.current:', [evt.item, evt.from]); },
 		onSort: function (evt) {
-		    console.log('onSort.backlog:', [evt.item, evt.from]);
+		    console.log('onSort.current:', [evt.item, evt.from]);
 		    //Move($(evt.item.children[0].children[0]).attr("itemid"), evt.oldIndex, evt.newIndex, "Current");
 		},
 		onEnd: function (evt) {
-		    console.log('onEnd.backlog:', [evt.item, evt.from]);
+		    console.log('onEnd.current:', [evt.item, evt.from]);
 		    //
 		    //alert("我是第"+evt.item.index()+"个");
 		}
@@ -187,6 +199,7 @@ function ChangeStatus(itemId,result,scode) {
 	        console.log('onEnd.done:', evt.item);
 	    }
 	});
+
 
 	//// Multi groups
 	//Sortable.create(byId('multi'), {
@@ -252,10 +265,13 @@ function ChangeStatus(itemId,result,scode) {
 	//Sortable.create(byId('handle-1'), {
 	//	handle: '.drag-handle',
 	//	animation: 150
-	//});
+    //});
+
+
+
+
 
 })();
-
 
 
 // Background

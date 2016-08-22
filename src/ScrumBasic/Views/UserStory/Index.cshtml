@@ -4,7 +4,7 @@
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
 }
-<div class="row fill">
+<div class="row fill"  id="activity_pane">
     <!--Menu-->
     <div class="col-md-2 slide_bar">
         <div class="block_header">
@@ -22,17 +22,17 @@
                   aria-hidden="true"></span>
             <spans>Current</spans>
             <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" 
-                  aria-hidden="true"></span>
+                  aria-hidden="true" id="btn_addCurrent"></span>
         </div>
         <div class="item_thumb">·@Model.CurrentItemCount    Aug 15-Current   pts: 0 of 10  20%</div>
         <div class="block_content_heigth">
             <ul id="Current" class="block_content">
             @foreach (var t in Model.CurrentItems)
             {
-                <li>
+                <li itemid=@t.ID class="block_content_li">
                     <span class="glyphicon glyphicon-triangle-right"></span>
                     <span class="glyphicon glyphicon-star"></span>
-                    <div style="display:inline-block">@t.Content (Gil)</div>
+                    <div style="display:inline-block;cursor:move">@t.Content (Gil)</div>
                     @await Component.InvokeAsync("StatusButton", new { model = t })
                 </li>
             }
@@ -44,28 +44,27 @@
         <div class="block_header">
             <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
             <spans>Backlog</spans>
-            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" id="btn_addBacklog"></span>
         </div>
         <div class="item_thumb">·@Model.BacklogItemCount    Aug 15-Current   pts: 0 of 10</div>
         <div class="block_content_heigth">
             <ul id="Backlog" class="block_content">
             @foreach (var t in Model.BacklogItems)
             {
-                <li>
+                <li itemid=@t.ID class="block_content_li">
                     <span class="glyphicon glyphicon-triangle-right"></span>
                     <span class="glyphicon glyphicon-star"></span>
-                    <div style="display:inline-block">@t.Content (Gil)</div>
+                    <div style="display:inline-block;cursor:move">@t.Content (Gil)</div>
 
                     @Html.ActionLink("开始", "StatusButton",
-                        new { itemID = @t.ID, result = "", scode = t.StatusCode },
-                        new
-                        {
-                            @class = "btn btn-info btn-xs item_status_button",
-                            @Name = "changeItemStatus",
-                            @ItemID = @t.ID,
-                            @BtnType = "StatusBtn"
-                        })
-                    }
+         new { itemID = @t.ID, result = "", scode = t.StatusCode },
+         new
+         {
+             @class = "btn btn-info btn-xs item_status_button",
+             @Name = "changeItemStatus",
+             @ItemID = @t.ID,
+             @BtnType = "StatusBtn"
+         })
                 </li>
             }
             </ul>
