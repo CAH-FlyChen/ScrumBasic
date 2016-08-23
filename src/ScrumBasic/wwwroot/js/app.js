@@ -53,8 +53,7 @@ $(function () {
         //$('#区域id').load('页面名称');
         var ul = $('#Current');
         var li = ul.prepend("<li id='currentAddArea'></li>");
-        $("#currentAddArea").load("http://localhost:5000/userStory/create");
-
+        $("#currentAddArea").load("/userStory/create");
     });
     $('#btn_addBacklog').click(function () {
         alert("ttttt");

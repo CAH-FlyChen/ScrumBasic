@@ -2,23 +2,23 @@
 @{
     Layout = "";
 }
+
+
 <form asp-action="Create" id="StoryItemCreateForm">
-    <div class="form-horizontal">
-        <h4>创建用户故事</h4>
-        <hr />
+    <div style="padding:10px;">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />
+
         <div class="form-group">
-            <label asp-for="Content" class="col-md-2 control-label">内容</label>
-            <div class="col-md-10">
-                <textarea asp-for="Content" class="form-control" style="height:200px;width:100%;max-width:1024px;" ></textarea>
-                <span asp-validation-for="Content" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ItemTypeCode" class="col-md-2 control-label">类型</label>
-            <div class="col-md-10">
-                @Html.DropDownListFor(
+            <label asp-for="Title">标题</label>
+            <input asp-for="Title" class="form-control">
+        </div> 
+
+        <div>
+            <div class="form-group form-horizontal">
+                <label asp-for="ItemTypeCode" class="col-md-3">类型</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(
         model => model.ItemTypeCode,
         new SelectList(
             new List<Object>
@@ -33,13 +33,13 @@
                 Model.ItemTypeCode
              ), null, new { @class = "form-control" }
         )
-                <span asp-validation-for="ItemTypeCode" class="text-danger" />
+                    <span asp-validation-for="ItemTypeCode" class="text-danger" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Point" class="col-md-2 control-label">点数</label>
-            <div class="col-md-10">
-                @Html.DropDownListFor(
+            <div class="form-group form-horizontal">
+                <label asp-for="Point" class="col-md-3">点数</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(
         model => model.Point,
         new SelectList(
             new List<Object>
@@ -56,27 +56,29 @@
                 "value",
                 "text",
                 Model.Point
-             ), null,new {@class= "form-control" }
+             ), null, new { @class = "form-control" }
         )
-                <span asp-validation-for="Point" class="text-danger" />
+                    <span asp-validation-for="Point" class="text-danger" />
+                </div>
             </div>
         </div>
-
-
+        
         <div class="form-group">
-            <label asp-for="StatusCode" class="col-md-2 control-label">状态</label>
-            <div class="col-md-10">
-                @Html.DropDownListFor(m=>m.DefaultStoryCode, Model.GetStatusSelectList(), "请选择", new { @class = "form-control", @disabled = "disabled" });
+            <label asp-for="StatusCode" class="col-md-3">状态</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(m => m.DefaultStoryCode, Model.GetStatusSelectList(), "请选择", new { @class = "form-control", @disabled = "disabled" })
                 <span asp-validation-for="StatusCode" class="text-danger" />
             </div>
         </div>
 
+        <div class="form-group">
+            <label asp-for="Content">内容</label>
+            <textarea asp-for="Content" class="form-control" style="height:100px;width:100%;min-width:100px;max-width:400px;"></textarea>
+        </div> 
 
-        @*<div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>*@
+        <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" style="float:right"/>
+        </div>
     </div>
 </form>
 
