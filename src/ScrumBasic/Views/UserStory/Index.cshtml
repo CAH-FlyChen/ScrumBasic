@@ -13,10 +13,14 @@
         </div>
         <div class="block_content_heigth_nothum" style="padding-left:10px">
             <div>Add Story</div>
+            <div>Current</div>
+            <div>BackLog</div>
+            <div>ICEBox</div>
+            <div id="m_btn_done">Done</div>
         </div>
     </div>
     <!--Current-->
-    <div class="col-md-3 block">
+    <div class="col-md-3 block" id="block_current">
         <div class="block_header">
             <span class="glyphicon glyphicon-remove block_header_left_padding block_header_icon_color" 
                   aria-hidden="true"></span>
@@ -30,17 +34,18 @@
             @foreach (var t in Model.CurrentItems)
             {
                 <li itemid=@t.ID class="block_content_li">
-                    <span class="glyphicon glyphicon-triangle-right"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <div style="display:inline-block;cursor:move">@t.Content (Gil)</div>
-                    @await Component.InvokeAsync("StatusButton", new { model = t })
+                    <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
+                    <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
+                    <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
+                    <div style="display:inline-block;cursor:move">@t.Title (<a href="#">Gil</a>)</div>
+                    <span>@await Component.InvokeAsync("StatusButton", new { model = t })</span>
                 </li>
             }
             </ul>
         </div>
     </div>
     <!--BackLog-->
-    <div class="col-md-3 block">
+    <div class="col-md-3 block" id="block_backlog">
         <div class="block_header">
             <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
             <spans>Backlog</spans>
@@ -52,25 +57,17 @@
             @foreach (var t in Model.BacklogItems)
             {
                 <li itemid=@t.ID class="block_content_li">
-                    <span class="glyphicon glyphicon-triangle-right"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <div style="display:inline-block;cursor:move">@t.Content (Gil)</div>
-
-                    @Html.ActionLink("开始", "StatusButton",
-         new { itemID = @t.ID, result = "", scode = t.StatusCode },
-         new
-         {
-             @class = "btn btn-info btn-xs item_status_button",
-             @Name = "changeItemStatus",
-             @ItemID = @t.ID,
-             @BtnType = "StatusBtn"
-         })
+                    <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
+                    <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
+                    <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
+                    <div style="display:inline-block;cursor:move">@t.Title (<a href="#">Gil</a>)</div>
+                    <span>@await Component.InvokeAsync("StatusButton", new { model = t })</span>
                 </li>
             }
             </ul>
         </div>
     </div>
-    <div class="col-md-4 block">
+    <div class="col-md-4 block" id="block_ice">
         <div class="block_header">
             <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
             <spans>ICE Box</spans>
@@ -78,19 +75,39 @@
         </div>
         <div class="item_thumb">162    Aug 15-Current   pts: 0 of 10</div>
         <div class="block_content_heigth">
-            <div class="block_content">
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
-
-                <div class="item_preview">bbbb</div>
-                <div class="item_preview">bbbb</div>
+            <div id="ICEBox" class="block_content">
+                @foreach (var t in Model.ICEItems)
+                {
+                    <li itemid=@t.ID class="block_content_li">
+                        <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
+                        <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
+                        <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
+                        <div style="display:inline-block;cursor:move">@t.Title (<a href="#">Gil</a>)</div>
+                        <span>@await Component.InvokeAsync("StatusButton", new { model = t })</span>
+                    </li>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 block" id="block_done">
+        <div class="block_header">
+            <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
+            <spans>Done</spans>
+            <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"></span>
+        </div>
+        <div class="item_thumb">162    Aug 15-Current   pts: 0 of 10</div>
+        <div class="block_content_heigth">
+            <div id="Done" class="block_content">
+                @foreach (var t in Model.DoneItems)
+                {
+                    <li itemid=@t.ID class="block_content_li">
+                        <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
+                        <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
+                        <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
+                        <div style="display:inline-block;cursor:move">@t.Title (<a href="#">Gil</a>)</div>
+                        <span>@await Component.InvokeAsync("StatusButton", new { model = t })</span>
+                    </li>
+                }
             </div>
         </div>
     </div>

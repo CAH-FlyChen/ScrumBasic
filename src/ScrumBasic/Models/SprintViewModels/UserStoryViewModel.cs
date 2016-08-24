@@ -11,15 +11,6 @@ namespace ScrumBasic.Models.SprintViewModels
 {
     public class UserStoryViewModel
     {
-        private ApplicationDbContext ctx;
-        public UserStoryViewModel()
-        {
-
-        }
-        public UserStoryViewModel(ApplicationDbContext ctx)
-        {
-            this.ctx = ctx;
-        }
         public string ID { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -37,16 +28,6 @@ namespace ScrumBasic.Models.SprintViewModels
         public int Order { get; set; }
         public DateTime CreateTime { get; set; }
 
-        public IEnumerable<SelectListItem> GetStatusSelectList()
-        {
-            var selectList = StoryStatusList.GetStatusList(ctx).OrderBy(t => t.Order).Select(a => new SelectListItem
-            {
-                Text = a.Text,
-                Value = a.Code
-            });
-            return selectList;
-        }
-
         public string DefaultStoryCode
         {
             get
@@ -58,5 +39,6 @@ namespace ScrumBasic.Models.SprintViewModels
         {
             get;set;
         }
+        public IEnumerable<SelectListItem> StatusList { get; internal set; }
     }
 }

@@ -32,12 +32,6 @@ namespace ScrumBasic.Controllers
             this.map = map;
         }
 
-
-        public double ForTest(int a, int b)
-        {
-            return a / b;
-        }
-
         // GET: UserStoryViewModels
         public async Task<IActionResult> Index()
         {
@@ -45,7 +39,6 @@ namespace ScrumBasic.Controllers
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = map.Map<UserStoryViewModel>(us);
-                //m.StatusName = StoryStatusList.GetStatusText(m.StatusCode,_context);
                 m.ButtonDisplayName = StoryStatusList.GetStatusButtonDisplay(m.StatusCode, _context).ButtonDisplayName;
                 if (m.ListID == "Backlog")
                 {
@@ -57,41 +50,35 @@ namespace ScrumBasic.Controllers
                     models.CurrentItemCount += 1;
                     models.CurrentItems.Add(m);
                 }
+                else if (m.ListID == "ICEBox")
+                {
+                    models.ICEItemCount += 1;
+                    models.ICEItems.Add(m);
+                }
+                else if (m.ListID == "Done")
+                {
+                    models.DoneItemsCount += 1;
+                    models.DoneItems.Add(m);
+                }
             }
-
             return View(models);
         }
 
-        //// GET: UserStoryViewModels/Details/5
-        //public async Task<IActionResult> Details(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    UserStory us = await _context.UserStory.SingleAsync(m => m.ID == id);
-        //    if (us == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    return View(us);
-        //}
-
-        //// GET: UserStoryViewModels/Create
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        public IActionResult Create()
+        public IActionResult Create(string listId)
         {
-            UserStoryViewModel userStoryViewModel = new UserStoryViewModel(_context);
+            UserStoryViewModel userStoryViewModel = new UserStoryViewModel();
             userStoryViewModel.Content = "";
             userStoryViewModel.ID = Guid.NewGuid().ToString("N");
             userStoryViewModel.Point = 0;
+            userStoryViewModel.ListID = listId;
 
+            var selectList = StoryStatusList.GetStatusList(_context).OrderBy(t => t.Order).Select(a => new SelectListItem
+            {
+                Text = a.Text,
+                Value = a.Code
+            });
+
+            userStoryViewModel.StatusList = selectList;
             return PartialView(userStoryViewModel);
         }
 
@@ -108,22 +95,17 @@ namespace ScrumBasic.Controllers
                 usNew.StatusCode = "Unstarted";
                 usNew.CreateTime = DateTime.Now;
                 usNew.Order = _context.UserStories.Max(t => t.Order)+1;
-                usNew.ListID = "Backlog";
                 _context.UserStories.Add(usNew);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View("OK");
         }
-        public class Pa
-        {
-            public string ItemId { get; set; }
-            public string TargetStatus { get; set; }
-        }
+
 
         // GET: UserStoryViewModels/Edit/5
         [HttpPost]
-        public async Task<IActionResult> Move([FromBody] Pa p)
+        public async Task<IActionResult> Move([FromBody] StoryMoveViewModel p)
         {
             if (p.ItemId == null)
             {
@@ -148,16 +130,8 @@ namespace ScrumBasic.Controllers
             return null;
         }
 
-        public class ChangeOrderParam
-        {
-            public string ItemID { get; set; }
-            public int OldIndex { get; set; }
-            public int NewIndex { get; set; }
-            public string OldListID { get; set; }
-            public string NewListID { get; set; }
-        }
         [HttpPost]
-        public async Task<IActionResult> ChangeOrder([FromBody] ChangeOrderParam p)
+        public async Task<IActionResult> ChangeOrder([FromBody] ChangeOrderViewModel p)
         {
             UserStory story = await _context.UserStories.SingleAsync(m => m.ID == p.ItemID);
             if (story == null) return HttpNotFound();
@@ -220,23 +194,26 @@ namespace ScrumBasic.Controllers
         }
 
 
-
-
-
-
-
-        public async Task<IActionResult> EditItem(string itemId)
+        public async Task<IActionResult> Edit(string listID,string itemID)
         {
-            if (string.IsNullOrEmpty(itemId))
+            if (string.IsNullOrEmpty(itemID))
             {
                 return HttpNotFound();
             }
-            UserStory story = await _context.UserStories.SingleAsync(m => m.ID == itemId);
+            UserStory story = await _context.UserStories.SingleAsync(m => m.ID == itemID);
             if (story == null)
             {
                 return HttpNotFound();
             }
             UserStoryViewModel usvm = map.Map<UserStoryViewModel>(story);
+
+            var selectList = StoryStatusList.GetStatusList(_context).OrderBy(t => t.Order).Select(a => new SelectListItem
+            {
+                Text = a.Text,
+                Value = a.Code
+            });
+
+            usvm.StatusList = selectList;
             return PartialView(usvm);
         }
 
@@ -260,40 +237,10 @@ namespace ScrumBasic.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index");
-            //return View(story);
         }
-
-
-        public class ChangeStatusParam
-        {
-            public string ItemID { get; set; }
-            public string CurrentStatusCode { get; set; }
-            public string ApprovalResult { get; set; }
-        }
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> ChangeStatus([FromBody]ChangeStatusParam p)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var item = _context.UserStories.Single(t => t.ID == p.ItemID);
-        //        var s = StoryStatusList.GetNextStatusButtonDisplay(item.StatusCode,_context);
-        //        if (string.IsNullOrEmpty(p.ApprovalResult))
-        //            item.StatusCode = s.Code;
-        //        else if (p.ApprovalResult == "Y")
-        //            item.StatusCode = "Accepted";
-        //        else
-        //            item.StatusCode = "Rejected";
-        //        await _context.SaveChangesAsync();
-        //        return Json(s.ButtonDisplayName);
-        //    }
-
-        //    return null;
-        //}
 
         [HttpPost]
-        public async Task<IActionResult> ChangeStatus([FromBody]ChangeStatusParam p)
+        public async Task<IActionResult> ChangeStatus([FromBody]ChangeStoryStatusViewModel p)
         {
             if (ModelState.IsValid)
             {
@@ -314,51 +261,6 @@ namespace ScrumBasic.Controllers
 
             return null;
         }
-
-
-        //// POST: UserStoryViewModels/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(UserStoryViewModel userStoryViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Update(userStoryViewModel);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(userStoryViewModel);
-        //}
-
-        //// GET: UserStoryViewModels/Delete/5
-        //[ActionName("Delete")]
-        //public async Task<IActionResult> Delete(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    UserStoryViewModel userStoryViewModel = await _context.UserStoryViewModel.SingleAsync(m => m.ID == id);
-        //    if (userStoryViewModel == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    return View(userStoryViewModel);
-        //}
-
-        //// POST: UserStoryViewModels/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(string id)
-        //{
-        //    UserStoryViewModel userStoryViewModel = await _context.UserStoryViewModel.SingleAsync(m => m.ID == id);
-        //    _context.UserStoryViewModel.Remove(userStoryViewModel);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction("Index");
-        //}
-
 
     }
 }

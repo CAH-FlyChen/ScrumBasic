@@ -11,6 +11,7 @@ namespace ScrumBasic.Models
         [Key]
         [MaxLength(32)]
         public string ID { get; set; }
+        public string Title { get; set; }
         public string Content { get; set; }
         public int Point { get; set; }
         /// <summary>

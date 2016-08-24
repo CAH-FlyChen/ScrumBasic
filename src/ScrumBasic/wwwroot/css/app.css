@@ -2,6 +2,13 @@ html,body{
     height:100%;
     padding-bottom:0px;
 }
+.form-control
+{
+    font-size:12px;
+}
+.form-group{
+    margin-bottom:10px;
+}
 /*#484F57*/
 .container {
     width: 100%;
@@ -21,14 +28,18 @@ html,body{
     padding-right:0px;
     color:#fff;
     background-color:#212121;
-    overflow:hidden;
-    overflow-y:hidden;
+    /*overflow:hidden;
+    overflow-y:hidden;*/
+    overflow-x:scroll;
 }
 
 .block{
     padding-left:5px;
     padding-right:0px;
     height:100%;
+}
+.block_min_width{
+    width:500px;
 }
 
 /*×ó²àsidebar*/
@@ -109,6 +120,12 @@ html,body{
     /*ÄÚÈÝ×ÖÌåÑÕÉ«*/
     color:black;
     margin-bottom:0px;
+}
+
+.block_content_li_expand{
+    color:black;
+    background-color:#e9e7dd;
+    background-image:url('/images/edit_bg.png');
 }
 
 

@@ -1,4 +1,5 @@
-function Move(itemId,oldIndex,newIndex,oldListID)
+var canCreatCurrent = true;
+function Move(itemId, oldIndex, newIndex, oldListID)
 {
     jQuery('#activity_pane').showLoading();
     $.ajax({
@@ -28,7 +29,9 @@ function MoveCrossList(itemId,oldIndex ,newIndex, oldListID ,newListID)
         }
     });
 }
-function ChangeStatus(itemId,result,scode) {
+
+function ChangeStatus(itemId, result, scode) {
+    jQuery('#activity_pane').showLoading();
     $.ajax({
         url: "UserStory/ChangeStatus",
         type: "POST",
@@ -42,6 +45,7 @@ function ChangeStatus(itemId,result,scode) {
                     var itemID = $(this).attr("itemid");
                     //alert(itemID);
                     ChangeStatus(itemID);
+                    jQuery('#activity_pane').hideLoading();
                     return false;
             });
         }
@@ -49,16 +53,74 @@ function ChangeStatus(itemId,result,scode) {
 }
 
 $(function () {
-    $('#btn_addCurrent').click(function () {
-        //$('#区域id').load('页面名称');
-        var ul = $('#Current');
-        var li = ul.prepend("<li id='currentAddArea'></li>");
-        $("#currentAddArea").load("/userStory/create");
+
+    $("[name='changeItemStatus']").click(function () {
+        var itemID = $(this).attr("itemid");
+        //alert(itemID);
+        ChangeStatus(itemID);
+        return false;
     });
-    $('#btn_addBacklog').click(function () {
-        alert("ttttt");
+
+    $('#btn_addCurrent').click(function () {
+        if (canCreatCurrent)
+        {
+            jQuery('#activity_pane').showLoading();
+            var ul = $('#Current');
+            var li = ul.prepend("<li id='currentAddArea' class='block_content_li_expand'></li>");
+            $("#currentAddArea").load("/userStory/create?listId=Current");
+            canCreatCurrent = false;
+            jQuery('#activity_pane').hideLoading();
+        }
+    });
+    $("span[name='btn_edit']").click(function () {
+        var current_li = $(this).parent();
+        var itemID = current_li.attr("itemid");
+        var placeHolderID = "currentEditArea_" + itemID;
+        var spanID = "btn_edit_" + itemID;
+        var current_span = $("#" + spanID);
+        if(current_span.hasClass("glyphicon-triangle-right"))
+        {
+            jQuery('#activity_pane').showLoading();
+            //要展开
+            ExpandStoryItem(current_li, current_span, placeHolderID, itemID);
+            jQuery('#activity_pane').hideLoading();
+        }
+        else
+        {
+            CloseStroyItem(current_span, placeHolderID);
+        }
+    });
+
+    $("#m_btn_done").click(function () {
+        $("#block_current").removeClass("col-md-3");
+        $("#block_current").addClass("block_min_width");
+        $("#block_backlog").removeClass("col-md-3");
+        $("#block_backlog").addClass("block_min_width");
+        $("#block_ice").removeClass("col-md-4");
+        $("#block_ice").addClass("block_min_width");
     });
 });
+
+function ExpandStoryItem(liItem, spanItem, placeHolderID,itemID)
+{
+
+    var li = liItem.after("<li id='" + placeHolderID + "' class='block_content_li_expand'></li>");
+    $(spanItem).removeClass("glyphicon-triangle-right");
+    $(spanItem).addClass("glyphicon-triangle-bottom");
+    $("#" + placeHolderID).load("/userStory/edit?listId=Current&itemId=" + itemID);
+}
+function CloseStroyItem(spanItem, placeHolderID)
+{
+    $(spanItem).removeClass("glyphicon-triangle-bottom");
+    $(spanItem).addClass("glyphicon-triangle-right");
+    $("#" + placeHolderID).remove();
+}
+
+
+
+
+
+
 
 (function () {
 	'use strict';
