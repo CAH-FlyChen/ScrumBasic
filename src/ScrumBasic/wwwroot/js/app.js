@@ -92,12 +92,12 @@ $(function () {
     });
 
     $("#m_btn_done").click(function () {
-        $("#block_current").removeClass("col-md-3");
-        $("#block_current").addClass("block_min_width");
-        $("#block_backlog").removeClass("col-md-3");
-        $("#block_backlog").addClass("block_min_width");
-        $("#block_ice").removeClass("col-md-4");
-        $("#block_ice").addClass("block_min_width");
+        //$("#block_current").removeClass("col-md-3");
+        //$("#block_current").addClass("block_min_width");
+        //$("#block_backlog").removeClass("col-md-3");
+        //$("#block_backlog").addClass("block_min_width");
+        //$("#block_ice").removeClass("col-md-4");
+        //$("#block_ice").addClass("block_min_width");
     });
 });
 

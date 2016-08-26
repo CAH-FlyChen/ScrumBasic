@@ -13,7 +13,12 @@ namespace ScrumBasic
         public MappingProfile():base()
         {
             CreateMap<UserStoryViewModel, UserStory>();
-            CreateMap<UserStory, UserStoryViewModel>();
+            CreateMap<UserStory, UserStoryViewModel>()
+                .ForMember(dest => dest.CreatorID, opt => opt.MapFrom(src => src.Creator.Id))
+                .ForMember(dest => dest.CreatorName, opt => opt.MapFrom(src => src.Creator.UserName))
+                .ForMember(dest => dest.AssignToID, opt => opt.MapFrom(src => src.AssignTo.Id))
+                .ForMember(dest => dest.AssignToName, opt => opt.MapFrom(src => src.AssignTo.UserName))
+                ;
         }
     }
 }

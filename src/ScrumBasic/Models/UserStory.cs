@@ -26,7 +26,9 @@ namespace ScrumBasic.Models
         /// 列表ID  current backlogice 等
         /// </summary>
         public string ListID { get; set; }
+        public ApplicationUser AssignTo { get; set; }
         public int Order { get; set; }
+        public ApplicationUser Creator { get; set; }
         public DateTime CreateTime { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using ScrumBasic.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
 
 namespace ScrumBasic.Controllers
 {
@@ -19,23 +20,25 @@ namespace ScrumBasic.Controllers
         private IOptions<Startup.MyOptions> _optons { get; set; }
         public UserStoryListViewModel models = new UserStoryListViewModel();
         private ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private IMapper map;
         /// <summary>
         /// 注入
         /// </summary>
         /// <param name="context"></param>
         /// <param name="opt"></param>
-        public UserStoryController(ApplicationDbContext context, IOptions<Startup.MyOptions> opt, IMapper map)
+        public UserStoryController(ApplicationDbContext context, IOptions<Startup.MyOptions> opt, IMapper map, UserManager<ApplicationUser> userManager)
         {
             _optons = opt;
             _context = context;
             this.map = map;
+            _userManager = userManager;
         }
 
         // GET: UserStoryViewModels
         public async Task<IActionResult> Index()
         {
-            List<UserStory> userStories = await _context.UserStories.OrderBy(t=>t.Order).ToListAsync<UserStory>();
+            List<UserStory> userStories = await _context.UserStories.Include(x=>x.Creator).OrderBy(t=>t.Order).ToListAsync<UserStory>();
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = map.Map<UserStoryViewModel>(us);
@@ -71,6 +74,13 @@ namespace ScrumBasic.Controllers
             userStoryViewModel.ID = Guid.NewGuid().ToString("N");
             userStoryViewModel.Point = 0;
             userStoryViewModel.ListID = listId;
+            var assigntoSelectList = _userManager.Users.ToList().Select(a => new SelectListItem
+            {
+                Text = a.UserName,
+                Value = a.Id
+            });
+
+            userStoryViewModel.AssignToList = assigntoSelectList;
 
             var selectList = StoryStatusList.GetStatusList(_context).OrderBy(t => t.Order).Select(a => new SelectListItem
             {
@@ -93,6 +103,7 @@ namespace ScrumBasic.Controllers
                 UserStory usNew = map.Map<UserStory>(userStoryViewModel);
                 usNew.ID = Guid.NewGuid().ToString("N");
                 usNew.StatusCode = "Unstarted";
+                usNew.Creator = _userManager.FindByNameAsync(User.Identity.Name).Result;
                 usNew.CreateTime = DateTime.Now;
                 usNew.Order = _context.UserStories.Max(t => t.Order)+1;
                 _context.UserStories.Add(usNew);
@@ -206,6 +217,14 @@ namespace ScrumBasic.Controllers
                 return HttpNotFound();
             }
             UserStoryViewModel usvm = map.Map<UserStoryViewModel>(story);
+
+            var assigntoSelectList = _userManager.Users.ToList().Select(a => new SelectListItem
+            {
+                Text = a.UserName,
+                Value = a.Id
+            });
+
+            usvm.AssignToList = assigntoSelectList;
 
             var selectList = StoryStatusList.GetStatusList(_context).OrderBy(t => t.Order).Select(a => new SelectListItem
             {

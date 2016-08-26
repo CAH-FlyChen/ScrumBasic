@@ -8,9 +8,10 @@ using ScrumBasic.Data;
 namespace ScrumBasic.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160826034343_add_story_creator")]
+    partial class add_story_creator
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -192,8 +193,6 @@ namespace ScrumBasic.Data.Migrations
                     b.Property<string>("ID")
                         .HasAnnotation("MaxLength", 32);
 
-                    b.Property<string>("AssignToId");
-
                     b.Property<string>("Content");
 
                     b.Property<DateTime>("CreateTime");
@@ -213,8 +212,6 @@ namespace ScrumBasic.Data.Migrations
                     b.Property<string>("Title");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("AssignToId");
 
                     b.HasIndex("CreatorId");
 
@@ -260,10 +257,6 @@ namespace ScrumBasic.Data.Migrations
 
             modelBuilder.Entity("ScrumBasic.Models.UserStory", b =>
                 {
-                    b.HasOne("ScrumBasic.Models.ApplicationUser", "AssignTo")
-                        .WithMany()
-                        .HasForeignKey("AssignToId");
-
                     b.HasOne("ScrumBasic.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");

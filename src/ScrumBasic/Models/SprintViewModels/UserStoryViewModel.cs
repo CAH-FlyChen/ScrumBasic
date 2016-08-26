@@ -27,7 +27,10 @@ namespace ScrumBasic.Models.SprintViewModels
         public string ListID { get; set; }
         public int Order { get; set; }
         public DateTime CreateTime { get; set; }
-
+        public string CreatorID { get; set; }
+        public string CreatorName { get; set; }
+        public string AssignToID { get; set; }
+        public string AssignToName { get; set; }
         public string DefaultStoryCode
         {
             get
@@ -40,5 +43,6 @@ namespace ScrumBasic.Models.SprintViewModels
             get;set;
         }
         public IEnumerable<SelectListItem> StatusList { get; internal set; }
+        public IEnumerable<SelectListItem> AssignToList { get; set; }
     }
 }
