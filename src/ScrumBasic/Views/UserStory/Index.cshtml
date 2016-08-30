@@ -6,30 +6,30 @@
 }
 <div class="row fill" id="activity_pane">
     <!--Menu-->
-    <div class="col-md-2 slide_bar">
+    <div class="col-md-2 slide_bar" id="mendu_side_bar">
         <div class="block_header">
             <span class="glyphicon glyphicon-menu-hamburger block_header_left_padding block_header_icon_color"
-                  aria-hidden="true"></span>
+                  aria-hidden="true" id="m_btn_showhidemenu"></span>
+            <span id="project_title">@ViewBag.ProjectName</span>
         </div>
-        <div class="block_content_heigth_nothum" style="padding-left:10px">
-            <div>Add Story</div>
-            <div>Current</div>
-            <div>BackLog</div>
-            <div>ICEBox</div>
-            <div id="m_btn_done">Done</div>
-        </div>
+        <ul class="block_content_heigth_nothum slide_bar_content" style="padding-left:10px">
+            <li><a href="#" id="m_btn_current">Current</a></li>
+            <li><a href="#" id="m_btn_backlog">BackLog</a></li>
+            <li><a href="#" id="m_btn_icebox">ICEBox</a></li>
+            <li><a href="#" id="m_btn_done">Done</a></li>
+        </ul>
     </div>
     @*right*@
-    <div class="col-md-10 right_content">
+    <div class="col-md-10 right_content" id="story_container">
         <ul class="list-inline">
-            <li class="block right_item" id="block_current">
+            <li class="block right_item" id="block_current" style="display:inline-block">
                 <!--Current-->
                 <div class="block_header">
                     <span class="glyphicon glyphicon-remove block_header_left_padding block_header_icon_color"
                           aria-hidden="true"></span>
                     <spans>Current</spans>
                     <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color"
-                          aria-hidden="true" id="btn_addCurrent"></span>
+                          aria-hidden="true" name="btn_addStory" listID="Current"></span>
                 </div>
                 <div class="item_thumb">·@Model.CurrentItemCount    Aug 15-Current   pts: 0 of 10  20%</div>
                 <div class="block_content_heigth">
@@ -48,12 +48,13 @@
                 </div>
 
             </li>
-            <li class="block right_item" id="block_backlog">
+
+            <li class="block right_item" id="block_backlog" style="display:inline-block">
                 <!--BackLog-->
                 <div class="block_header">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>Backlog</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" id="btn_addBacklog"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory" listID="Backlog"></span>
                 </div>
                 <div class="item_thumb">·@Model.BacklogItemCount    Aug 15-Current   pts: 0 of 10</div>
                 <div class="block_content_heigth">
@@ -72,12 +73,12 @@
                 </div>
             </li>
 
-            <li class="block right_item" id="block_icebox">
+            <li class="block right_item" id="block_icebox" style="display:inline-block">
                 <!--BackLog-->
                 <div class="block_header">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>ICE Box</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" id="btn_addBacklog"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory"  listID="ICEBox"></span>
                 </div>
                 <div class="item_thumb">·@Model.ICEItemCount    Aug 15-Current   pts: 0 of 10</div>
                 <div class="block_content_heigth">
@@ -96,12 +97,12 @@
                 </div>
             </li>
 
-            <li class="block right_item" id="block_done">
+            <li class="block right_item" id="block_done" style="display:none">
                 <!--BackLog-->
                 <div class="block_header">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>Done</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" id="btn_addBacklog"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory"  listID="Done"></span>
                 </div>
                 <div class="item_thumb">·@Model.DoneItemsCount    Aug 15-Current   pts: 0 of 10</div>
                 <div class="block_content_heigth">

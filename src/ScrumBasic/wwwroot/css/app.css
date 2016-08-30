@@ -14,8 +14,7 @@ html,body{
 
 .right_content
 {
-    overflow-x:scroll;
-    overflow-y:hidden;
+    overflow:hidden;
     height:100%;
     padding: 0 0 0 10px;
 }
@@ -28,6 +27,7 @@ html,body{
 .list-inline {
   white-space:nowrap;
   height:100%;
+  width:100%
 }
 
 .list-inline li{
@@ -48,6 +48,7 @@ html,body{
 .container {
     width: 100%;
     height:100%;
+    
  }
 
 .fill{
@@ -88,8 +89,21 @@ html,body{
     margin-top:-42px;
     padding-top:42px;
 }
+.slide_bar_content li{
+    margin-top:5px;
+}
 
-
+    .slide_bar_content li a:link {
+        color:gray;
+        text-decoration:none;
+    }
+    .slide_bar_content li a:visited {
+        color:gray;
+        text-decoration:none;
+    }
+     .slide_bar_content li a:hover {
+        color:white;
+    }
 /*每个block头部*/
 .block_header {
     height:42px;

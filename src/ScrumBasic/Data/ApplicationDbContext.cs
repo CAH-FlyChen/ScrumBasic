@@ -28,6 +28,8 @@ namespace ScrumBasic.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
 
+        public DbSet<Project> Projects { get; set; }
+
 
     }
 }

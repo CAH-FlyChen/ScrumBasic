@@ -1,4 +1,9 @@
 var canCreatCurrent = true;
+var listStandarWidth = 0;//程序启动时计算标准宽度
+var listShowedCount = 3;
+var sidebarWidth = 200;
+var sidebarMinWidth = 40;
+
 function Move(itemId, oldIndex, newIndex, oldListID)
 {
     jQuery('#activity_pane').showLoading();
@@ -61,17 +66,20 @@ $(function () {
         return false;
     });
 
-    $('#btn_addCurrent').click(function () {
+    $("span[name='btn_addStory']").click(function () {
         if (canCreatCurrent)
         {
             jQuery('#activity_pane').showLoading();
-            var ul = $('#Current');
-            var li = ul.prepend("<li id='currentAddArea' class='block_content_li_expand'></li>");
-            $("#currentAddArea").load("/userStory/create?listId=Current");
+            //get ul name
+            var ulID = $(this).attr("listid");
+            var ul = $('#' + ulID);
+            var li = ul.prepend("<li id='storyAddArea' class='block_content_li_expand'></li>");
+            $("#storyAddArea").load("/userStory/create?listId="+ulID);
             canCreatCurrent = false;
             jQuery('#activity_pane').hideLoading();
         }
     });
+    
     $("span[name='btn_edit']").click(function () {
         var current_li = $(this).parent();
         var itemID = current_li.attr("itemid");
@@ -91,19 +99,82 @@ $(function () {
         }
     });
 
-    $("#m_btn_done").click(function () {
-        //$("#block_current").removeClass("col-md-3");
-        //$("#block_current").addClass("block_min_width");
-        //$("#block_backlog").removeClass("col-md-3");
-        //$("#block_backlog").addClass("block_min_width");
-        //$("#block_ice").removeClass("col-md-4");
-        //$("#block_ice").addClass("block_min_width");
+    $("#m_btn_current").click(function () {
+        showHideList("block_current");
     });
+    $("#m_btn_backlog").click(function () {
+        showHideList("block_backlog");
+    });
+    $("#m_btn_icebox").click(function () {
+        showHideList("block_icebox");
+    });
+    $("#m_btn_done").click(function () {
+        showHideList("block_done");
+    });
+    $("#m_btn_showhidemenu").click(function () {
+        var sideBar = $("#mendu_side_bar");
+        if (sideBar.width() == sidebarMinWidth)
+        {
+            //show
+            AdjustPlace(sidebarWidth);
+            $("#project_title").show();
+            $("#m_btn_current").text("Current");
+            $("#m_btn_backlog").text("Backlog");
+            $("#m_btn_icebox").text("ICEBox");
+            $("#m_btn_done").text("Done");
+        }
+        else
+        {
+            //hide
+            AdjustPlace(sidebarMinWidth);
+            $("#project_title").hide();
+            $("#m_btn_current").text("C");
+            $("#m_btn_backlog").text("B");
+            $("#m_btn_icebox").text("I");
+            $("#m_btn_done").text("D");
+        }
+    });
+
+    AdjustPlace(sidebarWidth);
 });
+
+function AdjustPlace(leftWidth)
+{
+    var w = $(window).width();
+    var space = 4;//间隙宽度
+    var lineWidth = 6;
+    var columWidth = (w - leftWidth - space*2 - lineWidth - 5) / 3;
+    $("#mendu_side_bar").width(leftWidth);
+    $("#story_container").width(w - leftWidth - space-6);
+
+    $("#block_current").width(columWidth);
+    $("#block_backlog").width(columWidth);
+    $("#block_icebox").width(columWidth);
+}
+
+function showHideList(listID)
+{
+    var listItem = $("#" + listID);
+    if (listItem.css("display") == "none") {
+        listItem.show();
+        listItem.width(listStandarWidth);
+        listShowedCount += 1;
+        if (listShowedCount > 3)
+            $("#story_container").css("overflow-x", "scroll");
+    }
+    else {
+        listItem.hide();
+        listItem.width(0);
+        listShowedCount -= 1;
+
+        if (listShowedCount <= 3)
+            listItem.css("overflow-x", "hidden");
+    }
+}
+
 
 function ExpandStoryItem(liItem, spanItem, placeHolderID,itemID)
 {
-
     var li = liItem.after("<li id='" + placeHolderID + "' class='block_content_li_expand'></li>");
     $(spanItem).removeClass("glyphicon-triangle-right");
     $(spanItem).addClass("glyphicon-triangle-bottom");

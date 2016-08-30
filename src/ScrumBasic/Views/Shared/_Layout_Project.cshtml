@@ -23,7 +23,7 @@
     </environment>
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
-    <body>
+    <body style="overflow:hidden">
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -38,6 +38,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="Project" asp-action="Index">Project</a></li>
                         <li><a asp-controller="UserStory" asp-action="Index">UserStory</a></li>
                         <li><a asp-controller="Home" asp-action="About">About</a></li>
                         <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>

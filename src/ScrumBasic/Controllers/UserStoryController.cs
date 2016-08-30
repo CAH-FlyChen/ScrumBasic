@@ -36,9 +36,10 @@ namespace ScrumBasic.Controllers
         }
 
         // GET: UserStoryViewModels
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string projID)
         {
-            List<UserStory> userStories = await _context.UserStories.Include(x=>x.Creator).OrderBy(t=>t.Order).ToListAsync<UserStory>();
+            var project = await _context.Projects.SingleOrDefaultAsync(x => x.ID == projID);
+            List<UserStory> userStories = await _context.UserStories.Include(x=>x.Creator).Where(t=>t.Project.ID== projID).OrderBy(t=>t.Order).ToListAsync<UserStory>();
             foreach (var us in userStories)
             {
                 UserStoryViewModel m = map.Map<UserStoryViewModel>(us);
@@ -64,6 +65,8 @@ namespace ScrumBasic.Controllers
                     models.DoneItems.Add(m);
                 }
             }
+            ViewBag.ProjectName = project.Name;
+                
             return View(models);
         }
 
