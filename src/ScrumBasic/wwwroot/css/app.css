@@ -39,6 +39,7 @@ html,body{
     background-color:#222222;
     width:0px;
     float:left;
+    border-right:solid black 1px;
 }
     .slide_bar div{
         height:42px;
@@ -52,20 +53,21 @@ html,body{
     height:100%;
     width:0px;
     float:right;
+    overflow-y:hidden;
 }
 
 .storylist_container {
     white-space:nowrap;
     height:100%;
-    width:100%;
     list-style:none;
     padding:0px;
     margin:0px;
+    font-size: 0; /*ÐÞÕýli×ó²àÓÐ3pxµÄ¿Õ°×*/
 }
 .storylist_item{
     margin-left:5px;
+    margin-right:0px;
     padding:0px;
-    float:left;
     border-left:solid 1px black;
     border-bottom:solid 1px black;
     border-right:solid 1px black;
@@ -79,12 +81,15 @@ html,body{
     line-height:42px;
     background-color:#2c2d2f;
     width:100%;
+    color:white;
+    font-size:15px;
 }
 .storylist_sumary{
     height:26px;
     line-height:26px;
     background-color:#484f57;
     font-size:10px;
+    color:white;
 }
 .story_item_container{
     height:100%;

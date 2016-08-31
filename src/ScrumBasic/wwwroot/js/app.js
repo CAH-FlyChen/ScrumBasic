@@ -143,9 +143,9 @@ function AdjustPlace(leftWidth)
     var space = 5;//间隙宽度
 
     var w = $(window).innerWidth();
-    var container_width = w - leftWidth;
-    var cw = (w - leftWidth - space * 3 - 1 * 4) / 3;
-    var columWidth = parseInt(cw);
+    var container_width = w - leftWidth-1;//左侧右边有一条竖线
+    var cw = (w - leftWidth - space * 3 - 1 * 6) / 3;
+    var columWidth = parseInt(cw)-1;
 
     $("#story_container").width(container_width);
 
@@ -155,7 +155,8 @@ function AdjustPlace(leftWidth)
 
     $("#block_current").width(columWidth);
     $("#block_backlog").width(columWidth);
-    $("#block_icebox").width(columWidth-1);
+    $("#block_icebox").width(columWidth);
+    $("#block_done").width(columWidth);
 }
 
 function showHideList(listID)
@@ -166,7 +167,11 @@ function showHideList(listID)
         listItem.width(listStandarWidth);
         listShowedCount += 1;
         if (listShowedCount > 3)
+        {
             $("#story_container").css("overflow-x", "scroll");
+        }
+            
+
     }
     else {
         listItem.hide();
@@ -174,7 +179,10 @@ function showHideList(listID)
         listShowedCount -= 1;
 
         if (listShowedCount <= 3)
+        {
             $("#story_container").css("overflow-x", "hidden");
+        }
+            
     }
 }
 
