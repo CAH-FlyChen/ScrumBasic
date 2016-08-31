@@ -4,15 +4,15 @@
     ViewBag.Title = "Project Page";
     Layout = "~/Views/Shared/_Layout_project.cshtml";
 }
-<div class="row fill" id="activity_pane">
+<div class="fill" id="activity_pane">
     <!--Menu-->
-    <div class="col-md-2 slide_bar" id="mendu_side_bar">
+    <div class="slide_bar" id="mendu_side_bar">
         <div class="block_header">
             <span class="glyphicon glyphicon-menu-hamburger block_header_left_padding block_header_icon_color"
                   aria-hidden="true" id="m_btn_showhidemenu"></span>
             <span id="project_title">@ViewBag.ProjectName</span>
         </div>
-        <ul class="block_content_heigth_nothum slide_bar_content" style="padding-left:10px">
+        <ul class="slide_bar_content" style="padding-left:10px">
             <li><a href="#" id="m_btn_current">Current</a></li>
             <li><a href="#" id="m_btn_backlog">BackLog</a></li>
             <li><a href="#" id="m_btn_icebox">ICEBox</a></li>
@@ -20,23 +20,23 @@
         </ul>
     </div>
     @*right*@
-    <div class="col-md-10 right_content" id="story_container">
-        <ul class="list-inline">
-            <li class="block right_item" id="block_current" style="display:inline-block">
+    <div class="right_content" id="story_container">
+        <ul class="storylist_container">
+            <li id="block_current" class="storylist_item">
                 <!--Current-->
-                <div class="block_header">
+                <div class="storylist_title">
                     <span class="glyphicon glyphicon-remove block_header_left_padding block_header_icon_color"
                           aria-hidden="true"></span>
                     <spans>Current</spans>
                     <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color"
                           aria-hidden="true" name="btn_addStory" listID="Current"></span>
                 </div>
-                <div class="item_thumb">·@Model.CurrentItemCount    Aug 15-Current   pts: 0 of 10  20%</div>
-                <div class="block_content_heigth">
-                    <ul id="Current" class="block_content">
+                <div class="storylist_sumary">·@Model.CurrentItemCount    Aug 15-Current   pts: 0 of 10  20%</div>
+                <div  class="story_item_container">
+                    <ul id="Current">
                         @foreach (var t in Model.CurrentItems)
                         {
-                            <li itemid=@t.ID class="block_content_li">
+                            <li itemid=@t.ID class="story_item">
                                 <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
                                 <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
                                 <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
@@ -46,22 +46,20 @@
                         }
                     </ul>
                 </div>
-
             </li>
-
-            <li class="block right_item" id="block_backlog" style="display:inline-block">
+            <li id="block_backlog" class="storylist_item">
                 <!--BackLog-->
-                <div class="block_header">
+                <div class="storylist_title">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>Backlog</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory" listID="Backlog"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" name="btn_addStory" listID="Backlog"></span>
                 </div>
-                <div class="item_thumb">·@Model.BacklogItemCount    Aug 15-Current   pts: 0 of 10</div>
-                <div class="block_content_heigth">
-                    <ul id="Backlog" class="block_content">
+                <div class="storylist_sumary">·@Model.BacklogItemCount    Aug 15-Current   pts: 0 of 10</div>
+                <div class="story_item_container">
+                    <ul id="Backlog">
                         @foreach (var t in Model.BacklogItems)
                         {
-                            <li itemid=@t.ID class="block_content_li">
+                            <li itemid=@t.ID class="story_item">
                                 <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
                                 <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
                                 <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
@@ -73,19 +71,19 @@
                 </div>
             </li>
 
-            <li class="block right_item" id="block_icebox" style="display:inline-block">
+            <li id="block_icebox" class="storylist_item">
                 <!--BackLog-->
-                <div class="block_header">
+                <div class="storylist_title">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>ICE Box</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory"  listID="ICEBox"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" name="btn_addStory" listID="ICEBox"></span>
                 </div>
-                <div class="item_thumb">·@Model.ICEItemCount    Aug 15-Current   pts: 0 of 10</div>
-                <div class="block_content_heigth">
-                    <ul id="Done" class="block_content">
+                <div class="storylist_sumary">·@Model.ICEItemCount    Aug 15-Current   pts: 0 of 10</div>
+                <div class="story_item_container">
+                    <ul id="Done">
                         @foreach (var t in Model.ICEItems)
                         {
-                            <li itemid=@t.ID class="block_content_li">
+                            <li itemid=@t.ID class="story_item">
                                 <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
                                 <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
                                 <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
@@ -96,20 +94,19 @@
                     </ul>
                 </div>
             </li>
-
-            <li class="block right_item" id="block_done" style="display:none">
+            <li id="block_done" class="storylist_item" style="display:none">
                 <!--BackLog-->
-                <div class="block_header">
+                <div class="storylist_title">
                     <span class="glyphicon glyphicon-remove block_header_remove block_header_left_padding block_header_icon_color" aria-hidden="true"></span>
                     <spans>Done</spans>
-                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true"  name="btn_addStory"  listID="Done"></span>
+                    <span class="glyphicon glyphicon-plus block_header_padding_right block_header_icon_color" aria-hidden="true" name="btn_addStory" listID="Done"></span>
                 </div>
-                <div class="item_thumb">·@Model.DoneItemsCount    Aug 15-Current   pts: 0 of 10</div>
-                <div class="block_content_heigth">
-                    <ul id="Done" class="block_content">
+                <div class="storylist_sumary">·@Model.DoneItemsCount    Aug 15-Current   pts: 0 of 10</div>
+                <div class="story_item_container">
+                    <ul id="Done">
                         @foreach (var t in Model.DoneItems)
                         {
-                            <li itemid=@t.ID class="block_content_li">
+                            <li itemid=@t.ID class="story_item">
                                 <span style="color:#afafaf" class="glyphicon glyphicon-triangle-right" name="btn_edit" id="btn_edit_@t.ID"></span>
                                 <span style="color:#e0c85e" class="glyphicon glyphicon-star"></span>
                                 <span>[@t.Point]&nbsp;&nbsp;&nbsp;</span>
@@ -120,8 +117,7 @@
                     </ul>
                 </div>
             </li>
-
-      </ul>
- </div>
+        </ul>
+    </div>
 
 </div>

@@ -1,7 +1,7 @@
 var canCreatCurrent = true;
 var listStandarWidth = 0;//程序启动时计算标准宽度
 var listShowedCount = 3;
-var sidebarWidth = 200;
+var sidebarWidth = 200;//加右侧边框200
 var sidebarMinWidth = 40;
 
 function Move(itemId, oldIndex, newIndex, oldListID)
@@ -140,16 +140,22 @@ $(function () {
 
 function AdjustPlace(leftWidth)
 {
-    var w = $(window).width();
-    var space = 4;//间隙宽度
-    var lineWidth = 6;
-    var columWidth = (w - leftWidth - space*2 - lineWidth - 5) / 3;
+    var space = 5;//间隙宽度
+
+    var w = $(window).innerWidth();
+    var container_width = w - leftWidth;
+    var cw = (w - leftWidth - space * 3 - 1 * 4) / 3;
+    var columWidth = parseInt(cw);
+
+    $("#story_container").width(container_width);
+
+    listStandarWidth = columWidth;
     $("#mendu_side_bar").width(leftWidth);
-    $("#story_container").width(w - leftWidth - space-6);
+    
 
     $("#block_current").width(columWidth);
     $("#block_backlog").width(columWidth);
-    $("#block_icebox").width(columWidth);
+    $("#block_icebox").width(columWidth-1);
 }
 
 function showHideList(listID)
@@ -168,7 +174,7 @@ function showHideList(listID)
         listShowedCount -= 1;
 
         if (listShowedCount <= 3)
-            listItem.css("overflow-x", "hidden");
+            $("#story_container").css("overflow-x", "hidden");
     }
 }
 
