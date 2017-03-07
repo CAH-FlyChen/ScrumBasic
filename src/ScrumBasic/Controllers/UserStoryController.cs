@@ -207,7 +207,6 @@ namespace ScrumBasic.Controllers
             return RedirectToAction("Index");
         }
 
-
         public async Task<IActionResult> Edit(string listID,string itemID)
         {
             if (string.IsNullOrEmpty(itemID))
